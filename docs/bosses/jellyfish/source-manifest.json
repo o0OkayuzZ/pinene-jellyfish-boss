@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "audited_at": "2026-09-28",
+  "selected_visual_source": "meshy_040516_glb",
+  "sources": [
+    {
+      "id": "meshy_040516_glb",
+      "file_name": "Meshy_AI_Neon_Jellyfish_in_the_0405163425_texture.glb",
+      "bytes": 17854848,
+      "sha256": "9DA58B10A8E6BBCDABAA2AACD72A1C802D567A744FFD98E9AEC5718A1F7BC9EE",
+      "meshes": 1,
+      "triangles": 11020,
+      "role": "primary_visual"
+    },
+    {
+      "id": "blend_3",
+      "file_name": "3.blend",
+      "bytes": 14752009,
+      "sha256": "E4BDFDA620BF48D7F21DA570718CCAE24F555033838DF2F9E24490F900531311",
+      "role": "editable_segmentation_reference"
+    },
+    {
+      "id": "jelly_glb",
+      "file_name": "jelly.glb",
+      "bytes": 15682752,
+      "sha256": "DD1CB803E9F2E39F189B4EA1B97CCF65EB6D808FD6DD1D69CEDC90E755D0C47B",
+      "meshes": 2,
+      "triangles": 73208,
+      "role": "separated_export_reference"
+    },
+    {
+      "id": "jelly_tentacles_glb",
+      "file_name": "jellysayokusyu.glb",
+      "bytes": 11004020,
+      "sha256": "8A7EC261B8BE8EEB74CB6D0BE506F5D20727DF6AE3DC08F1F646D59571E49ED1",
+      "meshes": 1,
+      "triangles": 18640,
+      "role": "tentacle_reference"
+    }
+  ],
+  "runtime": {
+    "ship_triangle_mesh": false,
+    "geometry_route": "bedrock_cuboids",
+    "emissive_overlay": true,
+    "texture_atlas_candidates": [256, 512]
+  }
+}
