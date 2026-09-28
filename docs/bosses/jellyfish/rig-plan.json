@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "status": "greybox_v03",
+  "movement_mode": "airborne",
+  "source_policy": {
+    "preserve_archived_sources": true,
+    "ship_original_triangle_mesh": false,
+    "runtime_geometry": "bedrock_cuboids"
+  },
+  "skeleton": {
+    "shared_bones": ["root", "bell"],
+    "tentacle_bone_count": 56,
+    "total_bone_count": 58,
+    "tentacles": [
+      {
+        "class": "outer",
+        "count": 8,
+        "segments_per_tentacle": 4,
+        "bone_pattern": "tentacle_outer_{01..08}_{01..04}",
+        "purpose": ["silhouette", "locomotion", "individual_attacks"]
+      },
+      {
+        "class": "inner",
+        "count": 8,
+        "segments_per_tentacle": 3,
+        "bone_pattern": "tentacle_inner_{01..08}_{01..03}",
+        "purpose": ["oral_arm_motion", "close_range_threat", "silhouette_density"]
+      }
+    ]
+  },
+  "continuity": {
+    "independent_mesh_per_segment": true,
+    "segment_length_overlap_ratio": 1.12,
+    "shared_tentacle_mesh": false,
+    "detached_source_fragments_retained": false
+  },
+  "idle_animation": {
+    "loop_frames": 80,
+    "sample_frames": [1, 21, 41, 61, 81],
+    "per_tentacle_phase_offset": true,
+    "per_joint_amplitude_growth": true,
+    "bell_pulse": true
+  },
+  "performance_target": {
+    "normal_encounter_boss_count": 1,
+    "tentacle_cuboids": 56,
+    "final_total_cuboid_budget": 100,
+    "texture_atlas": [256, 512]
+  }
+}

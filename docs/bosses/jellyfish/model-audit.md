@@ -52,3 +52,33 @@ Draft runtime targets:
 3. Build a cuboid greybox and validate it in Bedrock before final texturing.
 4. Lock the skeleton, then implement idle, swim, telegraphs, attacks, stagger, and death.
 5. Tune gameplay only after real-device animation timing is known.
+
+## Topology finding and rebuild decision
+
+The April editable scene confirms that the visible damage is structural rather than a simple export glitch:
+
+- the source tentacle object contains 21 disconnected components
+- its dominant component merges most tentacles through the central mass, so clean per-tentacle weighting is not recoverable automatically
+- the bell object contains 25,429 disconnected components, including many microscopic surface fragments
+- retaining the archived model as visual reference while rebuilding supported runtime geometry is therefore mandatory
+
+## Confirmed rig direction
+
+The boss is an airborne encounter. Greybox v03 replaces the damaged lower mesh with 16 continuous, independently controlled tentacles:
+
+- 8 long outer tentacles, 4 joints each
+- 8 shorter inner oral arms, 3 joints each
+- 56 tentacle bones plus `root` and `bell`
+- overlapping segments hide all joint gaps
+- unique phase offsets prevent synchronized mechanical motion
+- an 80-frame idle loop and bell pulse are included in the Blender working copy
+
+The current dome is still the archived visual reference and the new tentacles are untextured greybox geometry. Final Bedrock cuboids and the texture atlas remain separate approval gates.
+
+### Reproducible greybox build
+
+Run Blender with the archived separated scene as the input:
+
+`blender SOURCE.blend --background --python tools/jellyfish_boss/build_clean_tentacle_rig.py -- OUTPUT.blend PREVIEW.png`
+
+The builder requires source objects `Meshy_Mesh_0` and `Meshy_Mesh_0.008`, hides the damaged tentacle mesh, preserves the bell as a visual reference, and creates the clean rig without modifying the source file.
