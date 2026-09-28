@@ -35,6 +35,7 @@ expected_geometry_ids = {
 assert set(geometries) == expected_geometry_ids
 
 cube_counts = {}
+all_cubes = []
 for identifier, geometry in geometries.items():
     bones = geometry["bones"]
     names = {bone["name"] for bone in bones}
@@ -58,6 +59,7 @@ for identifier, geometry in geometries.items():
         for cube in cubes
     )
     cube_counts[identifier] = len(cubes)
+    all_cubes.extend(cubes)
 
 expected_counts = {
     "v06": {
@@ -80,9 +82,33 @@ expected_counts = {
         "geometry.pinene.jellyfish_boss.tissue": 265,
         "geometry.pinene.jellyfish_boss.glow": 88,
     },
+    "v15": {
+        "geometry.pinene.jellyfish_boss.shell": 704,
+        "geometry.pinene.jellyfish_boss.tissue": 313,
+        "geometry.pinene.jellyfish_boss.glow": 119,
+    },
 }
 if revision in expected_counts:
     assert cube_counts == expected_counts[revision]
+
+per_face_cubes = [cube for cube in all_cubes if isinstance(cube["uv"], dict)]
+for cube in per_face_cubes:
+    assert set(cube["uv"]) == {"north", "south", "east", "west"}
+rendered_triangles = 2 * sum(
+    len(cube["uv"]) if isinstance(cube["uv"], dict) else 6
+    for cube in all_cubes
+)
+expected_triangles = {
+    "v06": 4776,
+    "v12": 6132,
+    "v13": 9612,
+    "v14": 9996,
+    "v15": 9176,
+}
+if revision in expected_triangles:
+    assert rendered_triangles == expected_triangles[revision]
+if revision == "v15":
+    assert len(per_face_cubes) == 1114
 animations = animation["animations"]
 animation_id = "animation.pinene.jellyfish_boss.idle"
 assert set(animations) == {animation_id}
@@ -121,6 +147,8 @@ print(
     f"geometries={len(geometries)} "
     f"bones={len(geometry_bones)} "
     f"cubes={sum(cube_counts.values())} "
+    f"rendered_triangles={rendered_triangles} "
+    f"open_ended_cubes={len(per_face_cubes)} "
     f"animated_bones={len(idle['bones'])} "
     f"controllers={len(controller_map)}"
 )

@@ -1,6 +1,6 @@
 {
-  "schema_version": 3,
-  "status": "fidelity_v14_seam_reduced_10k_near_lod",
+  "schema_version": 4,
+  "status": "fidelity_v15_face_culled_near_lod",
   "movement_mode": "airborne",
   "source_policy": {
     "preserve_archived_sources": true,
@@ -30,7 +30,7 @@
   },
   "continuity": {
     "independent_mesh_per_segment": true,
-    "visual_cubes_per_main_segment": 5,
+    "visual_cubes_per_main_segment": 7,
     "inner_companion_cubes_per_bone": 2,
     "inner_frill_cubes_per_bone": 2,
     "segment_length_overlap_ratio": 1.12,
@@ -50,19 +50,22 @@
   },
   "bedrock_export": {
     "format_version": "1.12.0",
-    "shell_geometry_cuboids": 480,
-    "tissue_geometry_cuboids": 265,
-    "emissive_geometry_cuboids": 88,
+    "shell_geometry_cuboids": 704,
+    "tissue_geometry_cuboids": 313,
+    "emissive_geometry_cuboids": 119,
+    "open_ended_cuboids": 1114,
+    "culled_join_faces": 2228,
     "poly_mesh_used": false
   },
   "performance_target": {
     "normal_encounter_boss_count": 1,
-    "tentacle_cuboids": 408,
-    "bell_cuboids": 403,
-    "bell_backfill_cuboids": 32,
+    "tentacle_cuboids": 520,
+    "bell_cuboids": 594,
+    "bell_backfill_cuboids": 40,
     "inner_body_and_skirt_cuboids": 22,
-    "final_total_cuboids": 833,
-    "maximum_rendered_triangles": 9996,
+    "final_total_cuboids": 1136,
+    "naive_unculled_triangles": 13632,
+    "maximum_rendered_triangles": 9176,
     "source_triangle_count_approx": 11020,
     "near_detail_distance_blocks": 16,
     "v12_medium_lod_cuboids": 511,

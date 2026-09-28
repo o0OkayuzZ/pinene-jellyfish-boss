@@ -1,4 +1,4 @@
-import bpy, math, os, sys
+import bpy, bmesh, math, os, sys
 from mathutils import Vector, Matrix
 
 args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
@@ -265,6 +265,17 @@ def tag_export_cube(obj, bone_name, center, dimensions, rotation_quaternion, mat
     )
     obj["jf_material_role"] = material.name
 
+def remove_local_z_caps(obj):
+    """Delete only the two length-axis caps used at overlapping joins."""
+    mesh = obj.data
+    bm = bmesh.new()
+    bm.from_mesh(mesh)
+    caps = [face for face in bm.faces if abs(face.normal.z) > 0.999]
+    bmesh.ops.delete(bm, geom=caps, context="FACES")
+    bm.to_mesh(mesh)
+    bm.free()
+    mesh.update()
+
 def add_body_lobe(name, location, dimensions, rotation, material, bevel_width):
     bpy.ops.mesh.primitive_cube_add(location=location, rotation=rotation)
     obj = bpy.context.object
@@ -339,6 +350,8 @@ def add_segment(name, start, end, width, bone_name, material,
     obj.rotation_quaternion = direction.to_track_quat("Z", "Y")
     obj.dimensions = (width, max(width * depth_scale, 0.006), length * length_scale)
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    remove_local_z_caps(obj)
+    obj["jf_open_ends"] = True
     bevel = obj.modifiers.new("Soft pixel edge", "BEVEL")
     bevel.width = min(width * 0.22, 0.012)
     bevel.segments = 2
@@ -371,6 +384,8 @@ def add_bell_panel(name, start, end, radial, tangent_width, normal_depth,
     obj.rotation_quaternion = Matrix((x_axis, y_axis, z_axis)).transposed().to_quaternion()
     obj.dimensions = (tangent_width, normal_depth, length * length_scale)
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    remove_local_z_caps(obj)
+    obj["jf_open_ends"] = True
     # Bedrock cuboids have hard edges; omitting Blender bevels keeps the preview
     # honest and avoids drawing a fake dark grid around every shell panel.
     obj.data.materials.append(material)
@@ -386,14 +401,14 @@ def add_bell_panel(name, start, end, radial, tangent_width, normal_depth,
     return obj
 
 # Bedrock-valid rotated cubes approximate the source bell without poly_mesh.
-# v14 spends the ~10k-triangle budget on the silhouette: 32 azimuth slices,
-# nine vertical tiers, six source-like cyan rays, and a dark inner backfill.
+# v15 reinvests culled join faces into a smoother near LOD: 40 azimuth
+# slices, eleven vertical tiers, six cyan rays, and a dark inner backfill.
 bell_cube_count = 0
-bell_radii = (0.560, 0.568, 0.555, 0.525, 0.475, 0.415, 0.335, 0.245, 0.135, 0.0)
-bell_heights = (0.320, 0.375, 0.430, 0.500, 0.570, 0.640, 0.700, 0.755, 0.800, 0.830)
-stripe_sectors = {0, 5, 11, 16, 21, 27}
-stripe_widths = (0.13, 0.17, 0.24, 0.32, 0.42, 0.53, 0.66, 0.79, 0.90)
-sector_count = 32
+bell_radii = (0.560, 0.568, 0.565, 0.548, 0.520, 0.480, 0.430, 0.370, 0.300, 0.220, 0.125, 0.0)
+bell_heights = (0.320, 0.365, 0.410, 0.455, 0.505, 0.555, 0.605, 0.650, 0.695, 0.740, 0.790, 0.830)
+stripe_sectors = {0, 7, 13, 20, 27, 33}
+stripe_widths = (0.12, 0.15, 0.19, 0.24, 0.30, 0.37, 0.45, 0.55, 0.66, 0.78, 0.90)
+sector_count = 40
 for i in range(sector_count):
     theta = 2.0 * math.pi * i / sector_count
     radial = Vector((math.cos(theta), math.sin(theta), 0.0))
@@ -415,8 +430,8 @@ for i in range(sector_count):
         avg_radius = (
             math.hypot(start.x, start.y) + math.hypot(end.x, end.y)
         ) * 0.5
-        tangent_width = max(0.032, 2.0 * math.pi * avg_radius / sector_count * 1.20)
-        normal_depth = (0.068, 0.067, 0.066, 0.064, 0.062, 0.060, 0.058, 0.057, 0.060)[tier]
+        tangent_width = max(0.026, 2.0 * math.pi * avg_radius / sector_count * 1.20)
+        normal_depth = (0.064, 0.063, 0.062, 0.061, 0.060, 0.058, 0.056, 0.054, 0.053, 0.052, 0.056)[tier]
         panel_material = bell_rim if tier == 0 else bell_gel
         add_bell_panel(
             f"Bell_{i + 1:02d}_{tier + 1:02d}",
@@ -443,7 +458,7 @@ for i in range(sector_count):
                 length_scale=1.34
             )
             bell_cube_count += 1
-        elif tier < 8 and (i * 5 + tier * 3) % 7 == 0:
+        elif tier < 10 and (i * 5 + tier * 3) % 7 == 0:
             axis = (end - start).normalized()
             center = start.lerp(end, 0.58)
             add_bell_panel(
@@ -455,9 +470,8 @@ for i in range(sector_count):
             )
             bell_cube_count += 1
 
-# Thirty-two long inner ribs sit behind the translucent panels. They use the
-# last 32 cuboids in the 10k budget to hide background-colored seams without
-# changing the dome silhouette or the six cyan surface rays.
+# Forty long inner ribs sit behind the translucent panels and hide the
+# background without adding visible joint caps.
 for i in range(sector_count):
     theta = 2.0 * math.pi * i / sector_count
     radial = Vector((math.cos(theta), math.sin(theta), 0.0))
@@ -465,12 +479,12 @@ for i in range(sector_count):
         f"Bell_Backfill_{i + 1:02d}",
         radial * 0.515 + Vector((0, 0, 0.335)),
         radial * 0.025 + Vector((0, 0, 0.795)),
-        radial, 0.112, 0.052, bell_gel,
+        radial, 0.090, 0.048, bell_gel,
         outward_offset=-0.050, length_scale=1.12
     )
     bell_cube_count += 1
 
-# Five overlapping tapered cubes per bone give the 10k-budget near LOD a
+# Seven open-ended tapered cuboids per bone give the optimized near LOD a
 # continuous curved silhouette. Oral-arm frills remain visual children of their
 # nearest chain bone, so the 58-bone runtime rig stays unchanged.
 visual_cube_count = 0
@@ -499,13 +513,13 @@ for chain in chains:
         bend_sign = 1.0 if ((chain["index"] + j) % 2 == 0) else -1.0
         bend = chain["widths"][j] * bend_scale * bend_sign
         points = []
-        for k in range(6):
-            u = k / 5.0
+        for k in range(8):
+            u = k / 7.0
             point = start.lerp(end, u)
             point += side * (math.sin(math.pi * u) * bend)
             points.append(point)
-        for k in range(5):
-            u = (k + 0.5) / 5.0
+        for k in range(7):
+            u = (k + 0.5) / 7.0
             width = chain["widths"][j] * (1.0 - (1.0 - terminal_taper) * u)
             add_segment(
                 f"{chain['kind']}_{chain['index'] + 1:02d}_{j + 1:02d}_{k + 1:02d}",
@@ -519,8 +533,8 @@ for chain in chains:
             companion_sign = -1.0 if ((chain["index"] + j) % 2 == 0) else 1.0
             offset = side * (0.040 * companion_sign)
             companion_start = points[0] + offset
-            companion_mid = points[2].lerp(points[3], 0.55) + offset * 1.15 + Vector((0, 0, -0.025))
-            companion_end = points[5] + offset * 0.58 + Vector((0, 0, 0.018 * math.sin(chain["index"] + j)))
+            companion_mid = points[3].lerp(points[4], 0.55) + offset * 1.15 + Vector((0, 0, -0.025))
+            companion_end = points[7] + offset * 0.58 + Vector((0, 0, 0.018 * math.sin(chain["index"] + j)))
             companion_width = max(chain["widths"][j] * 0.44, 0.018)
             companion_material = frill if (chain["index"] + j) % 2 else magenta
             add_segment(
@@ -537,7 +551,7 @@ for chain in chains:
 
             # One ragged side branch per oral-arm bone, with occasional twins.
             branch_sign = 1.0 if ((chain["index"] * 3 + j) % 2 == 0) else -1.0
-            anchor = points[2].lerp(points[3], 0.20 + 0.15 * ((chain["index"] + j) % 3))
+            anchor = points[3].lerp(points[4], 0.20 + 0.15 * ((chain["index"] + j) % 3))
             branch_length = 0.105 + 0.022 * j + 0.018 * math.sin(chain["index"] * 1.31 + j)
             drop = 0.070 + 0.022 * j
             branch_mid = anchor + side * (branch_sign * branch_length * 0.55) + Vector((0, 0, -drop * 0.35))
@@ -558,7 +572,7 @@ for chain in chains:
             visual_cube_count += 2
 
             # A second short leaflet fills the lower oral-arm silhouette.
-            leaflet_anchor = points[3].lerp(points[4], 0.70)
+            leaflet_anchor = points[5].lerp(points[6], 0.20)
             leaflet_sign = -branch_sign
             leaflet_end = (
                 leaflet_anchor

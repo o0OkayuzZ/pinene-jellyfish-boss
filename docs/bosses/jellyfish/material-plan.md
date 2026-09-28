@@ -1,6 +1,6 @@
 # Jellyfish boss material plan
 
-Status: v14 seam-reduced near-detail geometry exported as 833 Bedrock cuboids (9,996 maximum rendered triangles). Blender materials remain a visual target until the texture atlas and in-game render controllers are wired.
+Status: v15 optimized near-detail geometry exported as 1,136 Bedrock cuboids but only 9,176 rendered triangles after join-face culling. Blender materials remain a visual target until the texture atlas and in-game render controllers are wired.
 
 ## Visual target
 
@@ -30,9 +30,10 @@ Status: v14 seam-reduced near-detail geometry exported as 833 Bedrock cuboids (9
 ## Constraints
 
 - Keep the 16 independently animated tentacles and the 58-bone rig.
-- Use five overlapping tapered visual cubes per tentacle bone in the v14 near LOD to hide gaps.
-- Back the translucent bell with 32 dark inner ribs so shell seams do not reveal the background.
+- Use seven open-ended tapered visual cuboids per tentacle bone in the v15 near LOD.
+- Back the translucent bell with 40 dark inner ribs so shell seams do not reveal the background.
+- Omit the two hidden join faces on bell and tentacle cuboids; v15 removes 2,228 faces / 4,456 triangles.
 - Avoid full-body low alpha: overlapping transparent tentacles can sort badly in Bedrock.
-- Use v14 (833 cuboids) only as the near LOD; retain v12 (511) and v06 (398) as medium/far candidates.
+- Use v15 (1,136 cuboids / 9,176 rendered triangles) only as the near LOD; retain v12 (511) and v06 (398) as medium/far candidates.
 - Keep the near model at or below the approved ~10,000 rendered-triangle ceiling.
 - Validate in-game at 5, 10, 16, and 24 blocks with Vibrant Visuals both on and off before wiring LOD switches.

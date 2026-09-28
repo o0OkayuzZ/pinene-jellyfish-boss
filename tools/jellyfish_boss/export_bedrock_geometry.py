@@ -64,6 +64,13 @@ def cube_from_object(obj):
         "size": clean_vector(dimensions),
         "uv": [0, 0],
     }
+    if obj.get("jf_open_ends"):
+        # Blender local Z becomes Bedrock local Y after coordinate conversion.
+        # Omitting up/down removes the two hidden caps at overlapping joins.
+        cube["uv"] = {
+            face: {"uv": [0, 0], "uv_size": [1, 1]}
+            for face in ("north", "south", "east", "west")
+        }
     if max(abs(value) for value in rotation) > 0.0001:
         cube["pivot"] = clean_vector(center)
         cube["rotation"] = clean_vector(rotation)
@@ -159,6 +166,10 @@ with open(OUT, "w", encoding="utf-8", newline="\n") as handle:
     json.dump(payload, handle, ensure_ascii=False, indent=2)
     handle.write("\n")
 
+rendered_triangles = 2 * sum(
+    4 if obj.get("jf_open_ends") else 6
+    for obj in export_objects
+)
 print(f"EXPORTED {OUT}")
 print(
     "GEOMETRY "
@@ -166,5 +177,6 @@ print(
     f"shell_cubes={len(shell_objects)} "
     f"tissue_cubes={len(tissue_objects)} "
     f"glow_cubes={len(glow_objects)} "
-    f"total_cubes={len(export_objects)}"
+    f"total_cubes={len(export_objects)} "
+    f"rendered_triangles={rendered_triangles}"
 )
