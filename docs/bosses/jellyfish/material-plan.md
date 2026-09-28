@@ -1,6 +1,6 @@
 # Jellyfish boss material plan
 
-Status: v13 near-detail geometry exported as 801 Bedrock cuboids (9,612 maximum rendered triangles). Blender materials remain a visual target until the texture atlas and in-game render controllers are wired.
+Status: v14 seam-reduced near-detail geometry exported as 833 Bedrock cuboids (9,996 maximum rendered triangles). Blender materials remain a visual target until the texture atlas and in-game render controllers are wired.
 
 ## Visual target
 
@@ -8,6 +8,8 @@ Status: v13 near-detail geometry exported as 801 Bedrock cuboids (9,612 maximum 
 - Read as dense jelly, not clear glass: the silhouette must remain visible in combat.
 - Keep an irregular dark internal mass visible through the bell.
 - Let only selected cyan and pink markings emit; the entire body must not glow uniformly.
+- Paint cyan rays continuously across adjacent panel UVs and use dark mottling to disguise cuboid boundaries.
+- Keep shell-edge alpha high enough that background-colored seams do not appear between panels.
 
 ## Bedrock render stack
 
@@ -28,8 +30,9 @@ Status: v13 near-detail geometry exported as 801 Bedrock cuboids (9,612 maximum 
 ## Constraints
 
 - Keep the 16 independently animated tentacles and the 58-bone rig.
-- Use five overlapping tapered visual cubes per tentacle bone in the v13 near LOD to hide gaps.
+- Use five overlapping tapered visual cubes per tentacle bone in the v14 near LOD to hide gaps.
+- Back the translucent bell with 32 dark inner ribs so shell seams do not reveal the background.
 - Avoid full-body low alpha: overlapping transparent tentacles can sort badly in Bedrock.
-- Use v13 (801 cuboids) only as the near LOD; retain v12 (511) and v06 (398) as medium/far candidates.
+- Use v14 (833 cuboids) only as the near LOD; retain v12 (511) and v06 (398) as medium/far candidates.
 - Keep the near model at or below the approved ~10,000 rendered-triangle ceiling.
 - Validate in-game at 5, 10, 16, and 24 blocks with Vibrant Visuals both on and off before wiring LOD switches.

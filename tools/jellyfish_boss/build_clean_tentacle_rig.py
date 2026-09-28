@@ -357,7 +357,7 @@ def add_segment(name, start, end, width, bone_name, material,
     return obj
 
 def add_bell_panel(name, start, end, radial, tangent_width, normal_depth,
-                   material, outward_offset=0.0):
+                   material, outward_offset=0.0, length_scale=1.20):
     direction = end - start
     length = direction.length
     z_axis = direction.normalized()
@@ -369,14 +369,14 @@ def add_bell_panel(name, start, end, radial, tangent_width, normal_depth,
     obj.name = "JF_" + name
     obj.rotation_mode = "QUATERNION"
     obj.rotation_quaternion = Matrix((x_axis, y_axis, z_axis)).transposed().to_quaternion()
-    obj.dimensions = (tangent_width, normal_depth, length * 1.16)
+    obj.dimensions = (tangent_width, normal_depth, length * length_scale)
     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-    bevel = obj.modifiers.new("Bell panel edge", "BEVEL")
-    bevel.width, bevel.segments = min(normal_depth * 0.07, 0.0035), 2
+    # Bedrock cuboids have hard edges; omitting Blender bevels keeps the preview
+    # honest and avoids drawing a fake dark grid around every shell panel.
     obj.data.materials.append(material)
     tag_export_cube(
         obj, "bell", midpoint,
-        Vector((tangent_width, normal_depth, length * 1.16)),
+        Vector((tangent_width, normal_depth, length * length_scale)),
         obj.rotation_quaternion.copy(), material
     )
     world = obj.matrix_world.copy()
@@ -386,8 +386,8 @@ def add_bell_panel(name, start, end, radial, tangent_width, normal_depth,
     return obj
 
 # Bedrock-valid rotated cubes approximate the source bell without poly_mesh.
-# v13 spends the ~10k-triangle budget on the silhouette: 32 azimuth slices
-# and nine vertical tiers, while keeping only six source-like cyan rays.
+# v14 spends the ~10k-triangle budget on the silhouette: 32 azimuth slices,
+# nine vertical tiers, six source-like cyan rays, and a dark inner backfill.
 bell_cube_count = 0
 bell_radii = (0.560, 0.568, 0.555, 0.525, 0.475, 0.415, 0.335, 0.245, 0.135, 0.0)
 bell_heights = (0.320, 0.375, 0.430, 0.500, 0.570, 0.640, 0.700, 0.755, 0.800, 0.830)
@@ -439,7 +439,8 @@ for i in range(sector_count):
                 stripe_start, stripe_end, radial,
                 tangent_width * stripe_widths[tier] * stripe_scale,
                 0.010, cyan_glow,
-                outward_offset=normal_depth * 0.56 + 0.006
+                outward_offset=normal_depth * 0.56 + 0.006,
+                length_scale=1.34
             )
             bell_cube_count += 1
         elif tier < 8 and (i * 5 + tier * 3) % 7 == 0:
@@ -449,9 +450,25 @@ for i in range(sector_count):
                 f"Bell_Spot_{i + 1:02d}_{tier + 1:02d}",
                 center - axis * 0.016, center + axis * 0.016,
                 radial, min(tangent_width * 0.17, 0.030), 0.009, cyan_glow,
-                outward_offset=normal_depth * 0.56 + 0.007
+                outward_offset=normal_depth * 0.56 + 0.007,
+                length_scale=1.24
             )
             bell_cube_count += 1
+
+# Thirty-two long inner ribs sit behind the translucent panels. They use the
+# last 32 cuboids in the 10k budget to hide background-colored seams without
+# changing the dome silhouette or the six cyan surface rays.
+for i in range(sector_count):
+    theta = 2.0 * math.pi * i / sector_count
+    radial = Vector((math.cos(theta), math.sin(theta), 0.0))
+    add_bell_panel(
+        f"Bell_Backfill_{i + 1:02d}",
+        radial * 0.515 + Vector((0, 0, 0.335)),
+        radial * 0.025 + Vector((0, 0, 0.795)),
+        radial, 0.112, 0.052, bell_gel,
+        outward_offset=-0.050, length_scale=1.12
+    )
+    bell_cube_count += 1
 
 # Five overlapping tapered cubes per bone give the 10k-budget near LOD a
 # continuous curved silhouette. Oral-arm frills remain visual children of their

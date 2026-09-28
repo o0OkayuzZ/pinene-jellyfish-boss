@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "status": "fidelity_v13_10k_near_lod",
+  "status": "fidelity_v14_seam_reduced_10k_near_lod",
   "movement_mode": "airborne",
   "source_policy": {
     "preserve_archived_sources": true,
@@ -50,7 +50,7 @@
   },
   "bedrock_export": {
     "format_version": "1.12.0",
-    "shell_geometry_cuboids": 448,
+    "shell_geometry_cuboids": 480,
     "tissue_geometry_cuboids": 265,
     "emissive_geometry_cuboids": 88,
     "poly_mesh_used": false
@@ -58,10 +58,11 @@
   "performance_target": {
     "normal_encounter_boss_count": 1,
     "tentacle_cuboids": 408,
-    "bell_cuboids": 371,
+    "bell_cuboids": 403,
+    "bell_backfill_cuboids": 32,
     "inner_body_and_skirt_cuboids": 22,
-    "final_total_cuboids": 801,
-    "maximum_rendered_triangles": 9612,
+    "final_total_cuboids": 833,
+    "maximum_rendered_triangles": 9996,
     "source_triangle_count_approx": 11020,
     "near_detail_distance_blocks": 16,
     "v12_medium_lod_cuboids": 511,

@@ -75,6 +75,11 @@ expected_counts = {
         "geometry.pinene.jellyfish_boss.tissue": 265,
         "geometry.pinene.jellyfish_boss.glow": 88,
     },
+    "v14": {
+        "geometry.pinene.jellyfish_boss.shell": 480,
+        "geometry.pinene.jellyfish_boss.tissue": 265,
+        "geometry.pinene.jellyfish_boss.glow": 88,
+    },
 }
 if revision in expected_counts:
     assert cube_counts == expected_counts[revision]
