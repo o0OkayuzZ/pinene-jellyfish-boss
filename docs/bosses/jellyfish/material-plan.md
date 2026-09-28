@@ -1,6 +1,6 @@
 # Jellyfish boss material plan
 
-Status: v06 geometry candidate exported as Bedrock cuboids. Blender materials remain a visual target until the texture atlas and in-game render controllers are wired.
+Status: v13 near-detail geometry exported as 801 Bedrock cuboids (9,612 maximum rendered triangles). Blender materials remain a visual target until the texture atlas and in-game render controllers are wired.
 
 ## Visual target
 
@@ -28,7 +28,8 @@ Status: v06 geometry candidate exported as Bedrock cuboids. Blender materials re
 ## Constraints
 
 - Keep the 16 independently animated tentacles and the 58-bone rig.
-- Use three overlapping tapered visual cubes per tentacle bone to hide gaps.
+- Use five overlapping tapered visual cubes per tentacle bone in the v13 near LOD to hide gaps.
 - Avoid full-body low alpha: overlapping transparent tentacles can sort badly in Bedrock.
-- Use the 398-cube fidelity model within 24 blocks and prepare a simplified far-distance LOD.
-- Validate in-game at 5, 10, 15, and 24 blocks with Vibrant Visuals both on and off.
+- Use v13 (801 cuboids) only as the near LOD; retain v12 (511) and v06 (398) as medium/far candidates.
+- Keep the near model at or below the approved ~10,000 rendered-triangle ceiling.
+- Validate in-game at 5, 10, 16, and 24 blocks with Vibrant Visuals both on and off before wiring LOD switches.

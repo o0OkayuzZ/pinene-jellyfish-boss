@@ -1,6 +1,6 @@
 {
-  "schema_version": 2,
-  "status": "fidelity_v06_bedrock_cuboids",
+  "schema_version": 3,
+  "status": "fidelity_v13_10k_near_lod",
   "movement_mode": "airborne",
   "source_policy": {
     "preserve_archived_sources": true,
@@ -30,7 +30,7 @@
   },
   "continuity": {
     "independent_mesh_per_segment": true,
-    "visual_cubes_per_main_segment": 3,
+    "visual_cubes_per_main_segment": 5,
     "inner_companion_cubes_per_bone": 2,
     "inner_frill_cubes_per_bone": 2,
     "segment_length_overlap_ratio": 1.12,
@@ -50,19 +50,23 @@
   },
   "bedrock_export": {
     "format_version": "1.12.0",
-    "shell_geometry_cuboids": 176,
-    "tissue_geometry_cuboids": 188,
-    "emissive_geometry_cuboids": 34,
+    "shell_geometry_cuboids": 448,
+    "tissue_geometry_cuboids": 265,
+    "emissive_geometry_cuboids": 88,
     "poly_mesh_used": false
   },
   "performance_target": {
     "normal_encounter_boss_count": 1,
-    "tentacle_cuboids": 272,
-    "bell_cuboids": 109,
-    "inner_body_and_skirt_cuboids": 17,
-    "final_total_cuboids": 398,
-    "high_detail_distance_blocks": 24,
-    "far_lod_required": true,
+    "tentacle_cuboids": 408,
+    "bell_cuboids": 371,
+    "inner_body_and_skirt_cuboids": 22,
+    "final_total_cuboids": 801,
+    "maximum_rendered_triangles": 9612,
+    "source_triangle_count_approx": 11020,
+    "near_detail_distance_blocks": 16,
+    "v12_medium_lod_cuboids": 511,
+    "v06_far_lod_cuboids": 398,
+    "lod_switching_not_yet_wired": true,
     "texture_atlas": [512, 512]
   }
 }
