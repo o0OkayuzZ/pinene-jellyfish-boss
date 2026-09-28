@@ -1,6 +1,6 @@
 {
-  "schema_version": 1,
-  "status": "greybox_v03",
+  "schema_version": 2,
+  "status": "fidelity_v06_bedrock_cuboids",
   "movement_mode": "airborne",
   "source_policy": {
     "preserve_archived_sources": true,
@@ -30,21 +30,39 @@
   },
   "continuity": {
     "independent_mesh_per_segment": true,
+    "visual_cubes_per_main_segment": 3,
+    "inner_companion_cubes_per_bone": 2,
+    "inner_frill_cubes_per_bone": 2,
     "segment_length_overlap_ratio": 1.12,
     "shared_tentacle_mesh": false,
     "detached_source_fragments_retained": false
   },
   "idle_animation": {
+    "identifier": "animation.pinene.jellyfish_boss.idle",
     "loop_frames": 80,
+    "duration_seconds": 4.0,
     "sample_frames": [1, 21, 41, 61, 81],
+    "animated_bone_count": 57,
+    "seamless_endpoint": true,
     "per_tentacle_phase_offset": true,
     "per_joint_amplitude_growth": true,
     "bell_pulse": true
   },
+  "bedrock_export": {
+    "format_version": "1.12.0",
+    "shell_geometry_cuboids": 176,
+    "tissue_geometry_cuboids": 188,
+    "emissive_geometry_cuboids": 34,
+    "poly_mesh_used": false
+  },
   "performance_target": {
     "normal_encounter_boss_count": 1,
-    "tentacle_cuboids": 56,
-    "final_total_cuboid_budget": 100,
-    "texture_atlas": [256, 512]
+    "tentacle_cuboids": 272,
+    "bell_cuboids": 109,
+    "inner_body_and_skirt_cuboids": 17,
+    "final_total_cuboids": 398,
+    "high_detail_distance_blocks": 24,
+    "far_lod_required": true,
+    "texture_atlas": [512, 512]
   }
 }

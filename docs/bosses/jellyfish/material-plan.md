@@ -1,6 +1,6 @@
 # Jellyfish boss material plan
 
-Status: visual target locked for the v04 fidelity pass. The current Blender render is a material proof, not the final Bedrock model.
+Status: v06 geometry candidate exported as Bedrock cuboids. Blender materials remain a visual target until the texture atlas and in-game render controllers are wired.
 
 ## Visual target
 
@@ -30,4 +30,5 @@ Status: visual target locked for the v04 fidelity pass. The current Blender rend
 - Keep the 16 independently animated tentacles and the 58-bone rig.
 - Use three overlapping tapered visual cubes per tentacle bone to hide gaps.
 - Avoid full-body low alpha: overlapping transparent tentacles can sort badly in Bedrock.
-- Validate in-game at 5, 10, and 15 blocks with Vibrant Visuals both on and off.
+- Use the 398-cube fidelity model within 24 blocks and prepare a simplified far-distance LOD.
+- Validate in-game at 5, 10, 15, and 24 blocks with Vibrant Visuals both on and off.
