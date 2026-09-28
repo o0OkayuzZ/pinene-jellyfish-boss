@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "status": "fidelity_v15_face_culled_near_lod",
   "movement_mode": "airborne",
   "source_policy": {
@@ -56,6 +56,16 @@
     "open_ended_cuboids": 1114,
     "culled_join_faces": 2228,
     "poly_mesh_used": false
+  },
+  "material_export": {
+    "roles": ["shell", "tissue", "glow"],
+    "texture_size": [512, 512],
+    "maps_per_role": ["color", "normal", "mers"],
+    "bell_uv_grid": [40, 11],
+    "bell_uv_cell_pixels": [12, 44],
+    "texture_set_format": "1.21.30",
+    "pbr_manifest_integration_staged": true,
+    "required_min_engine_version": [1, 21, 120]
   },
   "performance_target": {
     "normal_encounter_boss_count": 1,

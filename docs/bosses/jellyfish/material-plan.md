@@ -1,6 +1,6 @@
 # Jellyfish boss material plan
 
-Status: v15 optimized near-detail geometry exported as 1,136 Bedrock cuboids but only 9,176 rendered triangles after join-face culling. Blender materials remain a visual target until the texture atlas and in-game render controllers are wired.
+Status: v15 optimized near-detail geometry exported as 1,136 Bedrock cuboids but only 9,176 rendered triangles after join-face culling. Three 512x512 color/normal/MERS texture sets are generated and the 40x11 bell UV grid is wired; pack integration remains staged.
 
 ## Visual target
 
@@ -22,10 +22,13 @@ Status: v15 optimized near-detail geometry exported as 1,136 Bedrock cuboids but
 
 ## Vibrant Visuals texture set
 
-- Use a 512x512 atlas and a matching RGBA MERS image.
-- MERS channels: R metalness 0; G localized emission; B roughness 0.16-0.30; A subsurface 0.55-0.80 on gel.
-- Add a normal map for shallow ripples only; no heavy bumps.
-- Classic graphics fallback keeps alpha-blend and emissive overlays even when MERS is unavailable.
+- Generated separate 512x512 shell, tissue, and glow color maps with matching RGBA MERS and normal maps.
+- The bell uses a 40x11 atlas grid with 12x44-pixel cells, so adjacent dome panels sample neighboring texture regions instead of repeating one pixel.
+- MERS channels: R metalness 0; G localized emission; B roughness; A subsurface scattering.
+- Shell: low roughness, near-zero emission, high subsurface. Tissue: moderate roughness and localized pink emission. Glow: full emissive green channel.
+- Normal maps use shallow organic ripples only; no heavy bumps.
+- Classic graphics fallback keeps the color alpha-blend and emissive overlay passes when PBR maps are unavailable.
+- Before copying these files into the integrated resource pack, raise its minimum engine version to 1.21.120 and add the `pbr` capability; do not silently change the shared manifest during model staging.
 
 ## Constraints
 

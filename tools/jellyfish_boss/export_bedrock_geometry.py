@@ -2,6 +2,7 @@ import bpy
 import json
 import math
 import os
+import re
 import sys
 from mathutils import Matrix, Quaternion, Vector
 
@@ -21,6 +22,13 @@ COORDINATE_CONVERSION = Matrix((
     (0.0, -1.0, 0.0),
 ))
 COORDINATE_CONVERSION_INV = COORDINATE_CONVERSION.transposed()
+ATLAS_ORIGIN = (16, 14)
+ATLAS_CELL = (12, 44)
+BELL_SECTORS = 40
+BELL_TIERS = 11
+BELL_PANEL_PATTERN = re.compile(
+    r"^JF_Bell_(?:Stripe_|Spot_)?(\\d{2})_(\\d{2})$"
+)
 
 def clean_number(value):
     value = round(float(value), 4)
@@ -54,21 +62,39 @@ def convert_rotation(values):
     euler = bedrock_rotation.to_euler("XYZ")
     return Vector(tuple(math.degrees(value) for value in euler))
 
+def atlas_cell_for_object(obj):
+    match = BELL_PANEL_PATTERN.match(obj.name)
+    if match:
+        sector = int(match.group(1)) - 1
+        tier = int(match.group(2)) - 1
+    else:
+        checksum = sum(
+            (index + 1) * ord(character)
+            for index, character in enumerate(obj.name)
+        )
+        sector = checksum % BELL_SECTORS
+        tier = (checksum // BELL_SECTORS) % BELL_TIERS
+    u = ATLAS_ORIGIN[0] + sector * ATLAS_CELL[0]
+    # Atlas rows run apex-to-rim so neighboring bell tiers sample continuously.
+    v = ATLAS_ORIGIN[1] + (BELL_TIERS - 1 - tier) * ATLAS_CELL[1]
+    return [u, v]
+
 def cube_from_object(obj):
     center = convert_position(obj["jf_center"])
     dimensions = convert_dimensions(obj["jf_dimensions"])
     rotation = convert_rotation(obj["jf_quaternion"])
     origin = center - dimensions * 0.5
+    atlas_uv = atlas_cell_for_object(obj)
     cube = {
         "origin": clean_vector(origin),
         "size": clean_vector(dimensions),
-        "uv": [0, 0],
+        "uv": atlas_uv,
     }
     if obj.get("jf_open_ends"):
         # Blender local Z becomes Bedrock local Y after coordinate conversion.
         # Omitting up/down removes the two hidden caps at overlapping joins.
         cube["uv"] = {
-            face: {"uv": [0, 0], "uv_size": [1, 1]}
+            face: {"uv": atlas_uv, "uv_size": list(ATLAS_CELL)}
             for face in ("north", "south", "east", "west")
         }
     if max(abs(value) for value in rotation) > 0.0001:

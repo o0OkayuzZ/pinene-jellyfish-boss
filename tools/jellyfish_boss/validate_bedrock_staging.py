@@ -3,6 +3,8 @@ import os
 import sys
 from pathlib import Path
 
+from PIL import Image
+
 args = sys.argv[1:]
 if len(args) not in (1, 2):
     raise SystemExit(
@@ -109,6 +111,41 @@ if revision in expected_triangles:
     assert rendered_triangles == expected_triangles[revision]
 if revision == "v15":
     assert len(per_face_cubes) == 1114
+    for cube in per_face_cubes:
+        for face in cube["uv"].values():
+            assert face["uv_size"] == [12, 44]
+            u, v = face["uv"]
+            assert 0 <= u <= 500 and 0 <= v <= 468
+            assert u + 12 <= 512 and v + 44 <= 512
+
+    texture_root = root / "textures" / "entity" / "pinene"
+    for role in ("shell", "tissue", "glow"):
+        stem = f"jellyfish_boss_{role}"
+        paths = {
+            "color": texture_root / f"{stem}.png",
+            "normal": texture_root / f"{stem}_normal.png",
+            "mers": texture_root / f"{stem}_mers.png",
+        }
+        for path in paths.values():
+            with Image.open(path) as image:
+                assert image.size == (512, 512)
+                assert image.mode == "RGBA"
+        with Image.open(paths["mers"]) as mers:
+            red, green, blue, alpha = mers.getextrema()
+            assert red == (0, 0)
+            assert blue[0] > 0 and alpha[1] > 0
+            if role == "glow":
+                assert green == (255, 255)
+        texture_set = load(
+            f"textures/entity/pinene/{stem}.texture_set.json"
+        )
+        assert texture_set["format_version"] == "1.21.30"
+        layers = texture_set["minecraft:texture_set"]
+        assert layers == {
+            "color": stem,
+            "normal": f"{stem}_normal",
+            "metalness_emissive_roughness_subsurface": f"{stem}_mers",
+        }
 animations = animation["animations"]
 animation_id = "animation.pinene.jellyfish_boss.idle"
 assert set(animations) == {animation_id}
