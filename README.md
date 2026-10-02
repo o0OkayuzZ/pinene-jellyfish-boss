@@ -10,6 +10,7 @@ Minecraft Bedrock向けの空中型ボスクラゲ単体パックです。
 
 - v0.1.0 開発版
 - 1,136 cuboids / 実描画9,176 triangles
+- 傘幅約12ブロック / 触手込み高さ約16.7ブロック
 - 58 bones / 57 animated bones
 - 16 independent tentacle chains
 - shell・tissue・glowの3描画層
@@ -22,9 +23,10 @@ Minecraft Bedrock向けの空中型ボスクラゲ単体パックです。
 1. `py -3 scripts/package_mcaddon.py` を実行します。
 2. `dist/pinene-jellyfish-boss-v0.1.0.mcaddon` をMinecraftで開きます。
 3. ワールドへBPとRPを適用します。
-4. 次のコマンドで召喚します。
+4. クリエイティブのアイテム欄から「ボスクラゲのスポーンエッグ」を使うか、次のコマンドで召喚します。
 
 ```mcfunction
+/give @s pinene:jellyfish_boss_spawn_egg
 /summon pinene:jellyfish_boss
 ```
 

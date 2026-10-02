@@ -24,6 +24,17 @@ client = load(RP / "entity/jellyfish_boss.entity.json")
 identifier = "pinene:jellyfish_boss"
 assert behavior["minecraft:entity"]["description"]["identifier"] == identifier
 assert client["minecraft:client_entity"]["description"]["identifier"] == identifier
+assert "spawn_egg" not in client["minecraft:client_entity"]["description"]
+components = behavior["minecraft:entity"]["components"]
+assert components["minecraft:scale"]["value"] == 9.5
+assert components["minecraft:collision_box"] == {"width": 10.5, "height": 8.0}
+
+spawn_egg = load(BP / "items/jellyfish_boss_spawn_egg.item.json")
+egg_components = spawn_egg["minecraft:item"]["components"]
+assert egg_components["minecraft:entity_placer"]["entity"] == identifier
+assert egg_components["minecraft:icon"] == "pinene_jellyfish_boss_spawn_egg"
+item_atlas = load(RP / "textures/item_texture.json")
+assert "pinene_jellyfish_boss_spawn_egg" in item_atlas["texture_data"]
 
 geometry = load(RP / "models/entity/jellyfish_boss.geo.json")
 geometries = geometry["minecraft:geometry"]
@@ -67,6 +78,13 @@ for role in ("shell", "tissue", "glow"):
     texture_set = load(texture_root / f"{stem}.texture_set.json")
     assert texture_set["format_version"] == "1.21.30"
 
+egg_icon = RP / "textures/items/jellyfish_boss_spawn_egg.png"
+with egg_icon.open("rb") as handle:
+    assert handle.read(8) == b"\x89PNG\r\n\x1a\n"
+    length = struct.unpack(">I", handle.read(4))[0]
+    assert handle.read(4) == b"IHDR" and length == 13
+    assert struct.unpack(">II", handle.read(8)) == (32, 32)
+
 print("VALID", f"cubes={len(cubes)}", f"triangles={rendered_triangles}",
       f"open_ended={len(open_ended)}", f"animated_bones={len(idle['bones'])}",
-      "textures=9")
+      "textures=10", "spawn_egg=ok", "scale=9.5")

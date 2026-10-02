@@ -31,11 +31,7 @@
         "controller.render.pinene.jellyfish_boss.shell",
         "controller.render.pinene.jellyfish_boss.tissue",
         "controller.render.pinene.jellyfish_boss.glow"
-      ],
-      "spawn_egg": {
-        "base_color": "#071A27",
-        "overlay_color": "#E131B8"
-      }
+      ]
     }
   }
 }

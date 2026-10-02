@@ -21,9 +21,12 @@
         "hud_range": 64,
         "name": "entity.pinene:jellyfish_boss.name"
       },
+      "minecraft:scale": {
+        "value": 9.5
+      },
       "minecraft:collision_box": {
-        "width": 3.5,
-        "height": 4.5
+        "width": 10.5,
+        "height": 8.0
       },
       "minecraft:physics": {
         "has_gravity": false,
