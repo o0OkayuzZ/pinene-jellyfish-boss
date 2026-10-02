@@ -1,0 +1,18 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Pinene Jellyfish Boss RP",
+    "description": "High-density translucent PBR jellyfish boss resources",
+    "uuid": "6d6bc920-c0b8-4250-9958-3cd28f5811f7",
+    "version": [0, 1, 0],
+    "min_engine_version": [1, 21, 120]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "7b599351-4ab1-49b5-abbb-26b92f2f0e56",
+      "version": [0, 1, 0]
+    }
+  ],
+  "capabilities": ["pbr"]
+}

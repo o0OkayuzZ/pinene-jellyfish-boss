@@ -1,0 +1,8 @@
+{
+  "format_version": "1.21.30",
+  "minecraft:texture_set": {
+    "color": "jellyfish_boss_glow",
+    "normal": "jellyfish_boss_glow_normal",
+    "metalness_emissive_roughness_subsurface": "jellyfish_boss_glow_mers"
+  }
+}

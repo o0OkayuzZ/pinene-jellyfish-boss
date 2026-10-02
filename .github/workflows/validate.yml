@@ -1,0 +1,23 @@
+name: Validate Jellyfish Boss Pack
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate Bedrock pack
+        run: python scripts/validate_pack.py
+      - name: Build mcaddon
+        run: python scripts/package_mcaddon.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pinene-jellyfish-boss
+          path: dist/*.mcaddon

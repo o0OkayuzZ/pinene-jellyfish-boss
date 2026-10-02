@@ -1,0 +1,41 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "pinene:jellyfish_boss",
+      "min_engine_version": "1.21.0",
+      "materials": {
+        "shell": "entity_alphablend",
+        "tissue": "entity_alphatest",
+        "glow": "entity_emissive_alpha"
+      },
+      "textures": {
+        "shell": "textures/entity/pinene/jellyfish_boss_shell",
+        "tissue": "textures/entity/pinene/jellyfish_boss_tissue",
+        "glow": "textures/entity/pinene/jellyfish_boss_glow"
+      },
+      "geometry": {
+        "shell": "geometry.pinene.jellyfish_boss.shell",
+        "tissue": "geometry.pinene.jellyfish_boss.tissue",
+        "glow": "geometry.pinene.jellyfish_boss.glow"
+      },
+      "scripts": {
+        "animate": [
+          "idle"
+        ]
+      },
+      "animations": {
+        "idle": "animation.pinene.jellyfish_boss.idle"
+      },
+      "render_controllers": [
+        "controller.render.pinene.jellyfish_boss.shell",
+        "controller.render.pinene.jellyfish_boss.tissue",
+        "controller.render.pinene.jellyfish_boss.glow"
+      ],
+      "spawn_egg": {
+        "base_color": "#071A27",
+        "overlay_color": "#E131B8"
+      }
+    }
+  }
+}
