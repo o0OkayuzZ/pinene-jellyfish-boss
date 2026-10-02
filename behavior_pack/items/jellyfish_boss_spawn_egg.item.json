@@ -4,7 +4,8 @@
     "description": {
       "identifier": "pinene:jellyfish_boss_spawn_egg",
       "menu_category": {
-        "category": "items"
+        "category": "items",
+        "is_hidden_in_commands": false
       }
     },
     "components": {

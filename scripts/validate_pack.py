@@ -30,6 +30,12 @@ assert components["minecraft:scale"]["value"] == 9.5
 assert components["minecraft:collision_box"] == {"width": 10.5, "height": 8.0}
 
 spawn_egg = load(BP / "items/jellyfish_boss_spawn_egg.item.json")
+egg_description = spawn_egg["minecraft:item"]["description"]
+assert egg_description["identifier"] == "pinene:jellyfish_boss_spawn_egg"
+assert egg_description["menu_category"] == {
+    "category": "items",
+    "is_hidden_in_commands": False,
+}
 egg_components = spawn_egg["minecraft:item"]["components"]
 assert egg_components["minecraft:entity_placer"]["entity"] == identifier
 assert egg_components["minecraft:icon"] == "pinene_jellyfish_boss_spawn_egg"
