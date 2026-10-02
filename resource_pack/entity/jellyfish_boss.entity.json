@@ -29,6 +29,7 @@
       "animations": {
         "idle": "animation.pinene.jellyfish_boss.idle",
         "distant": "animation.pinene.jellyfish_boss.distant",
+        "pulse": "animation.pinene.jellyfish_boss.pulse",
         "lod": "controller.animation.pinene.jellyfish_boss.lod"
       },
       "render_controllers": [

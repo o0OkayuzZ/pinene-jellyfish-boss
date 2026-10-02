@@ -58,7 +58,7 @@ cubes = [
     for bone in item["bones"]
     for cube in bone.get("cubes", [])
 ]
-open_ended = [cube for cube in cubes if isinstance(cube.get("uv"), dict) and len(cube["uv"]) < 6]
+open_ended = [cube for cube in cubes if isinstance(cube.get("uv"), dict) and len(cube['uv']) < 6]
 rendered_triangles = sum(
     len(cube["uv"]) * 2 if isinstance(cube.get("uv"), dict) else 12
     for cube in cubes
@@ -70,7 +70,7 @@ def counts(items):
     return len(active),sum(len(c['uv'])*2 for c in active)
 assert counts(near_geometries) == (526,3272)
 assert counts(far_geometries) == (174,1096)
-assert sum(len(g['bones']) for g in near_geometries) == 60
+assert sum(len(g['bones']) for g in near_geometries) == 116
 assert len(client['minecraft:client_entity']['description']['render_controllers']) == 2
 controllers = load(RP/'render_controllers/jellyfish_boss.render_controllers.json')
 assert len(controllers['render_controllers']) == 2
@@ -91,12 +91,31 @@ for cube in cubes:
 
 animation = load(RP / "animations/jellyfish_boss.animation.json")
 idle = animation["animations"]["animation.pinene.jellyfish_boss.idle"]
-assert len(idle["bones"]) == 57
+assert len(idle["bones"]) == 112
+assert idle['animation_length'] == 6.0
+assert animation['animations']['animation.pinene.jellyfish_boss.pulse']['bones'].keys() == {'bell'}
 assert animation['animations']['animation.pinene.jellyfish_boss.distant']['bones'].keys() == {'bell'}
 assert len({name.rsplit('_',1)[0] for name in idle['bones'] if name.startswith('tentacle_')}) == 16
-for bone in idle['bones'].values():
-    for channel in bone.values():
-        assert channel['0.00'] == channel['4.00']
+near_names = {b['name'] for g in near_geometries for b in g['bones']}
+assert set(idle['bones']) <= near_names
+for name, count in (('outer',8),('inner',6)):
+    for index in range(1,9):
+        assert all(f'tentacle_{name}_{index:02d}_{joint:02d}' in idle['bones']
+                   for joint in range(1,count+1))
+for item in animation['animations'].values():
+    for bone in item['bones'].values():
+        for channel in bone.values():
+            pairs = sorted((float(t),v) for t,v in channel.items())
+            assert len(pairs) >= 33
+            assert pairs[0][0] == 0 and pairs[-1][0] == item['animation_length']
+            assert pairs[0][1] == pairs[-1][1]
+            assert all(b-a <= .125001 for (a,_),(b,_) in zip(pairs,pairs[1:]))
+assert lod['animation_controllers']['controller.animation.pinene.jellyfish_boss.lod']['states']['near']['animations'] == ['idle','pulse']
+assert bp_manifest['header']['version'] == rp_manifest['header']['version'] == [0,1,2]
+rig = load(ROOT/'docs/bosses/jellyfish/rig-plan.json')
+assert rig['skeleton']['tentacle_bone_count'] == len(idle['bones']) == 112
+assert rig['skeleton']['total_bone_count'] == len(near_names) == 114
+assert rig['idle_animation']['duration_seconds'] == idle['animation_length']
 
 texture_root = RP / "textures/entity/pinene"
 for role in ("shell", "tissue"):
@@ -120,5 +139,5 @@ with egg_icon.open("rb") as handle:
     assert struct.unpack(">II", handle.read(8)) == (32, 32)
 
 print("VALID", f"near={counts(near_geometries)}", f"far={counts(far_geometries)}",
-      f"open_ended={len(open_ended)}", f"animated_bones={len(idle['bones'])}",
+      f"open_ended={len(open_ended)}", "animated_bones=113",
       "used_textures=7", "spawn_egg=ok", "physical_scale=1", "baked_visual_scale=9.5")

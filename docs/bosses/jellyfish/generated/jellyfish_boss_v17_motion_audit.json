@@ -1,0 +1,14 @@
+{
+  "revision": "v17",
+  "sampled_poses": 481,
+  "independent_tentacles": 16,
+  "near_animated_bones": 113,
+  "maximum_centerline_joint_gap_model_units": 4.6426317614245836e-05,
+  "maximum_centerline_radius_blocks": 6.888945388766776,
+  "centerline_y_blocks": [
+    1.181286096572876,
+    12.736841201782227
+  ],
+  "maximum_loop_velocity_change_degrees_per_second": 0.7952000000000048,
+  "scope": "Exported pivot math; excludes engine/material/FPS verification"
+}

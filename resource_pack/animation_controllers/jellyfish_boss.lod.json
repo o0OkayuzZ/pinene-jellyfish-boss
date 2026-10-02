@@ -6,7 +6,8 @@
       "states": {
         "near": {
           "animations": [
-            "idle"
+            "idle",
+            "pulse"
           ],
           "blend_transition": 0.3,
           "transitions": [
