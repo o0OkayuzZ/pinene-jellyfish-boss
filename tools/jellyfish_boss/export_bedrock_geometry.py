@@ -4,7 +4,7 @@ import math
 import os
 import re
 import sys
-from mathutils import Matrix, Quaternion, Vector
+from mathutils import Euler, Matrix, Quaternion, Vector
 
 args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 if len(args) != 1:
@@ -14,8 +14,9 @@ if len(args) != 1:
     )
 
 OUT = os.path.abspath(args[0])
-SCALE = 16.0
-Y_OFFSET = 16.0
+RUNTIME_SCALE = 9.5 if bpy.context.scene.get("jf_lod") else 1.0
+SCALE = 16.0 * RUNTIME_SCALE
+Y_OFFSET = SCALE
 COORDINATE_CONVERSION = Matrix((
     (1.0, 0.0, 0.0),
     (0.0, 0.0, 1.0),
@@ -27,7 +28,7 @@ ATLAS_CELL = (12, 44)
 BELL_SECTORS = 40
 BELL_TIERS = 11
 BELL_PANEL_PATTERN = re.compile(
-    r"^JF_Bell_(?:Stripe_|Spot_)?(\\d{2})_(\\d{2})$"
+    r"^JF_Bell_(?:Stripe_|Spot_)?(\d{2})_(\d{2})$"
 )
 
 def clean_number(value):
@@ -60,7 +61,10 @@ def convert_rotation(values):
         @ COORDINATE_CONVERSION_INV
     )
     euler = bedrock_rotation.to_euler("XYZ")
-    return Vector(tuple(math.degrees(value) for value in euler))
+    # Bedrock's XYZ angles correspond to Rz(-z) @ Ry(y) @ Rx(-x) in
+    # right-handed model coordinates. Check against the Blockbench parser.
+    return Vector((-math.degrees(euler.x), math.degrees(euler.y),
+                   -math.degrees(euler.z)))
 
 def atlas_cell_for_object(obj):
     match = BELL_PANEL_PATTERN.match(obj.name)
@@ -100,6 +104,16 @@ def cube_from_object(obj):
     if max(abs(value) for value in rotation) > 0.0001:
         cube["pivot"] = clean_vector(center)
         cube["rotation"] = clean_vector(rotation)
+    rect = list(obj.get("jf_uv_rect", []))
+    if rect:
+        faces = ("north", "south") if obj.get("jf_surface_panel") else (
+            "north", "south", "east", "west") if obj.get("jf_open_ends") else (
+            "north", "south", "east", "west", "up", "down")
+        cube["uv"] = {face: {"uv": rect[:2], "uv_size": rect[2:]}
+                      for face in faces}
+        if "south" in cube["uv"]:
+            cube["uv"]["south"] = {"uv": [rect[0]+rect[2], rect[1]],
+                                    "uv_size": [-rect[2], rect[3]]}
     return cube
 
 arm = bpy.data.objects.get("JF_Rig")
@@ -128,11 +142,12 @@ TISSUE_ROLES = {
 }
 glow_objects = [
     obj for obj in export_objects
-    if material_role(obj).startswith("JF_Cyan_Glow")
+    if material_role(obj).startswith("JF_Cyan_Glow") and not obj.get("jf_uv_rect")
 ]
 tissue_objects = [
     obj for obj in export_objects
-    if material_role(obj) in TISSUE_ROLES
+    if material_role(obj) in TISSUE_ROLES or (
+        material_role(obj).startswith("JF_Cyan_Glow") and obj.get("jf_uv_rect"))
 ]
 shell_objects = [
     obj for obj in export_objects
@@ -146,8 +161,16 @@ def make_bones(objects):
         cubes_by_bone.setdefault(str(obj["jf_bone"]), []).append(
             cube_from_object(obj)
         )
+    required = set(cubes_by_bone)
+    for name in list(required):
+        bone = arm.data.bones.get(name)
+        while bone.parent:
+            bone = bone.parent
+            required.add(bone.name)
     bones = []
     for bone in arm.data.bones:
+        if bone.name not in required:
+            continue
         entry = {
             "name": bone.name,
             "pivot": clean_vector(convert_position(bone.head_local)),
@@ -161,14 +184,16 @@ def make_bones(objects):
     return bones
 
 def make_geometry(identifier, objects):
+    if bpy.context.scene.get("jf_lod") == "far":
+        identifier += "_far"
     return {
         "description": {
             "identifier": identifier,
             "texture_width": 512,
             "texture_height": 512,
-            "visible_bounds_width": 4.0,
-            "visible_bounds_height": 4.0,
-            "visible_bounds_offset": [0.0, 1.0, 0.0],
+            "visible_bounds_width": 16.0 if RUNTIME_SCALE > 1 else 4.0,
+            "visible_bounds_height": 22.0 if RUNTIME_SCALE > 1 else 4.0,
+            "visible_bounds_offset": [0.0, 9.5 if RUNTIME_SCALE > 1 else 1.0, 0.0],
         },
         "bones": make_bones(objects),
     }
@@ -187,13 +212,38 @@ payload = {
     "minecraft:geometry": geometries,
 }
 
+# Decode through Blockbench's documented mirror-X and negative-X/Y rotation
+# path, then compare all cube corners against tagged Blender coordinates.
+# This catches the sign bug that produces fan-shaped bells and broken chains.
+mirror_x = Matrix.Diagonal((-1.0,1.0,1.0))
+max_corner_error = 0.0
+for obj in export_objects:
+    cube = cube_from_object(obj)
+    pivot = mirror_x @ Vector(cube.get('pivot',convert_position(obj['jf_center'])))
+    rx,ry,rz = [math.radians(v) for v in cube.get('rotation',[0,0,0])]
+    rotation = Euler((-rx,-ry,rz),'XYZ').to_matrix()
+    source_rotation = Quaternion(tuple(obj['jf_quaternion']))
+    original, decoded = [], []
+    for sx in (-1,1):
+        for sy in (-1,1):
+            for sz in (-1,1):
+                local = Vector(tuple(s*d*.5 for s,d in zip((sx,sy,sz),obj['jf_dimensions'])))
+                original.append(mirror_x @ convert_position(Vector(obj['jf_center'])+source_rotation@local))
+                point = Vector(cube['origin'])+Vector(tuple((s+1)*d*.5 for s,d in zip((sx,sy,sz),cube['size'])))
+                point = mirror_x @ point
+                decoded.append(pivot+rotation@(point-pivot))
+    max_corner_error = max(max_corner_error,max(min((p-q).length for q in decoded) for p in original))
+assert max_corner_error < 0.002, max_corner_error
+assert BELL_PANEL_PATTERN.match('JF_Bell_01_01')
+print('ROTATION_ROUNDTRIP maximum_corner_error=',max_corner_error)
+
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, "w", encoding="utf-8", newline="\n") as handle:
     json.dump(payload, handle, ensure_ascii=False, indent=2)
     handle.write("\n")
 
 rendered_triangles = 2 * sum(
-    4 if obj.get("jf_open_ends") else 6
+    2 if obj.get("jf_surface_panel") else 4 if obj.get("jf_open_ends") else 6
     for obj in export_objects
 )
 print(f"EXPORTED {OUT}")

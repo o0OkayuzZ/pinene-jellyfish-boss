@@ -1,0 +1,32 @@
+{
+  "format_version": "1.10.0",
+  "animation_controllers": {
+    "controller.animation.pinene.jellyfish_boss.lod": {
+      "initial_state": "near",
+      "states": {
+        "near": {
+          "animations": [
+            "idle"
+          ],
+          "blend_transition": 0.3,
+          "transitions": [
+            {
+              "far": "variable.jellyfish_far"
+            }
+          ]
+        },
+        "far": {
+          "animations": [
+            "distant"
+          ],
+          "blend_transition": 0.3,
+          "transitions": [
+            {
+              "near": "!variable.jellyfish_far"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

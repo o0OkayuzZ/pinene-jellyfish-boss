@@ -1,3 +1,4 @@
+import json
 import subprocess
 import sys
 import tempfile
@@ -6,7 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
-VERSION = "0.1.0"
+VERSION = ".".join(str(n) for n in json.loads((ROOT / "behavior_pack/manifest.json").read_text(encoding="utf-8"))["header"]["version"])
 OUTPUT = DIST / f"pinene-jellyfish-boss-v{VERSION}.mcaddon"
 
 def zip_tree(source, target):

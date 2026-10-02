@@ -1,6 +1,6 @@
 {
-  "schema_version": 5,
-  "status": "fidelity_v15_face_culled_near_lod",
+  "schema_version": 6,
+  "status": "v16_source_baked_surface_lod_runtime_test_pending",
   "movement_mode": "airborne",
   "source_policy": {
     "preserve_archived_sources": true,
@@ -8,7 +8,10 @@
     "runtime_geometry": "bedrock_cuboids"
   },
   "skeleton": {
-    "shared_bones": ["root", "bell"],
+    "shared_bones": [
+      "root",
+      "bell"
+    ],
     "tentacle_bone_count": 56,
     "total_bone_count": 58,
     "tentacles": [
@@ -17,23 +20,31 @@
         "count": 8,
         "segments_per_tentacle": 4,
         "bone_pattern": "tentacle_outer_{01..08}_{01..04}",
-        "purpose": ["silhouette", "locomotion", "individual_attacks"]
+        "purpose": [
+          "silhouette",
+          "locomotion",
+          "individual_attacks"
+        ]
       },
       {
         "class": "inner",
         "count": 8,
         "segments_per_tentacle": 3,
         "bone_pattern": "tentacle_inner_{01..08}_{01..03}",
-        "purpose": ["oral_arm_motion", "close_range_threat", "silhouette_density"]
+        "purpose": [
+          "oral_arm_motion",
+          "close_range_threat",
+          "silhouette_density"
+        ]
       }
     ]
   },
   "continuity": {
     "independent_mesh_per_segment": true,
-    "visual_cubes_per_main_segment": 7,
-    "inner_companion_cubes_per_bone": 2,
+    "visual_cubes_per_main_segment": 3,
+    "inner_companion_cubes_per_bone": 1,
     "inner_frill_cubes_per_bone": 2,
-    "segment_length_overlap_ratio": 1.12,
+    "segment_length_overlap_ratio": 1.22,
     "shared_tentacle_mesh": false,
     "detached_source_fragments_retained": false
   },
@@ -41,7 +52,13 @@
     "identifier": "animation.pinene.jellyfish_boss.idle",
     "loop_frames": 80,
     "duration_seconds": 4.0,
-    "sample_frames": [1, 21, 41, 61, 81],
+    "sample_frames": [
+      1,
+      21,
+      41,
+      61,
+      81
+    ],
     "animated_bone_count": 57,
     "seamless_endpoint": true,
     "per_tentacle_phase_offset": true,
@@ -50,37 +67,61 @@
   },
   "bedrock_export": {
     "format_version": "1.12.0",
-    "shell_geometry_cuboids": 704,
-    "tissue_geometry_cuboids": 313,
-    "emissive_geometry_cuboids": 119,
-    "open_ended_cuboids": 1114,
-    "culled_join_faces": 2228,
+    "shell_geometry_cuboids": 352,
+    "tissue_geometry_cuboids": 174,
+    "emissive_geometry_cuboids": 0,
+    "surface_panels": 256,
+    "open_ended_segments": 248,
     "poly_mesh_used": false
   },
   "material_export": {
-    "roles": ["shell", "tissue", "glow"],
-    "texture_size": [512, 512],
-    "maps_per_role": ["color", "normal", "mers"],
-    "bell_uv_grid": [40, 11],
-    "bell_uv_cell_pixels": [12, 44],
+    "roles": [
+      "shell",
+      "tissue"
+    ],
+    "texture_size": [
+      512,
+      512
+    ],
+    "maps_per_role": [
+      "color",
+      "normal",
+      "mers"
+    ],
+    "bell_uv_grid": [
+      32,
+      8
+    ],
     "texture_set_format": "1.21.30",
-    "pbr_manifest_integration_staged": true,
-    "required_min_engine_version": [1, 21, 120]
+    "pbr_manifest_integration_staged": false,
+    "required_min_engine_version": [
+      1,
+      21,
+      120
+    ],
+    "bell_panorama_pixels": [
+      512,
+      360
+    ],
+    "source_baked": true,
+    "normal_convention": "DirectX"
   },
   "performance_target": {
     "normal_encounter_boss_count": 1,
-    "tentacle_cuboids": 520,
-    "bell_cuboids": 594,
-    "bell_backfill_cuboids": 40,
+    "tentacle_cuboids": 248,
+    "bell_cuboids": 256,
     "inner_body_and_skirt_cuboids": 22,
-    "final_total_cuboids": 1136,
-    "naive_unculled_triangles": 13632,
-    "maximum_rendered_triangles": 9176,
-    "source_triangle_count_approx": 11020,
-    "near_detail_distance_blocks": 16,
-    "v12_medium_lod_cuboids": 511,
-    "v06_far_lod_cuboids": 398,
-    "lod_switching_not_yet_wired": true,
-    "texture_atlas": [512, 512]
+    "final_total_cuboids": 526,
+    "maximum_rendered_triangles": 3272,
+    "far_cuboids": 174,
+    "far_triangles": 1096,
+    "lod_switch_distance_blocks": 80,
+    "lod_switching_not_yet_wired": false,
+    "texture_atlas": [
+      512,
+      512
+    ],
+    "render_layers": 2,
+    "measured_fps": null
   }
 }

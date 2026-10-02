@@ -4,20 +4,36 @@
     "name": "Pinene Jellyfish Boss BP",
     "description": "Airborne jellyfish boss behavior pack",
     "uuid": "c6d95727-f82f-4794-a7db-1baa509d3df1",
-    "version": [0, 1, 0],
-    "min_engine_version": [1, 21, 120]
+    "version": [
+      0,
+      1,
+      1
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      120
+    ]
   },
   "modules": [
     {
       "type": "data",
       "uuid": "bea9a828-4bda-438b-b8c1-611b4907ebeb",
-      "version": [0, 1, 0]
+      "version": [
+        0,
+        1,
+        1
+      ]
     }
   ],
   "dependencies": [
     {
       "uuid": "6d6bc920-c0b8-4250-9958-3cd28f5811f7",
-      "version": [0, 1, 0]
+      "version": [
+        0,
+        1,
+        1
+      ]
     }
   ]
 }

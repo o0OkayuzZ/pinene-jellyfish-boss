@@ -1,6 +1,8 @@
 # Jellyfish boss material plan
 
-Status: v15 optimized near-detail geometry exported as 1,136 Bedrock cuboids but only 9,176 rendered triangles after join-face culling. Three 512x512 color/normal/MERS texture sets are generated and the 40x11 bell UV grid is wired; pack integration remains staged.
+Current status: v16 is integrated as 526 near / 174 far cuboids, two render layers and two 512x512 source-baked color/DirectX-normal/MERS sets. See [v16-build.md](v16-build.md) for the current implementation and runtime-test gates.
+
+The details below retain the earlier v15 material planning context; its three-layer staging route has been superseded.
 
 ## Visual target
 

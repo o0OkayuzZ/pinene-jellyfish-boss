@@ -10,7 +10,11 @@
     },
     "components": {
       "minecraft:type_family": {
-        "family": ["jellyfish_boss", "monster", "mob"]
+        "family": [
+          "jellyfish_boss",
+          "monster",
+          "mob"
+        ]
       },
       "minecraft:health": {
         "value": 600,
@@ -22,7 +26,7 @@
         "name": "entity.pinene:jellyfish_boss.name"
       },
       "minecraft:scale": {
-        "value": 9.5
+        "value": 1.0
       },
       "minecraft:collision_box": {
         "width": 10.5,
@@ -60,8 +64,14 @@
       },
       "minecraft:damage_sensor": {
         "triggers": [
-          {"cause": "fall", "deals_damage": false},
-          {"cause": "drowning", "deals_damage": false}
+          {
+            "cause": "fall",
+            "deals_damage": false
+          },
+          {
+            "cause": "drowning",
+            "deals_damage": false
+          }
         ]
       },
       "minecraft:fire_immune": {},

@@ -41,7 +41,7 @@
   "runtime": {
     "ship_triangle_mesh": false,
     "geometry_route": "bedrock_cuboids",
-    "emissive_overlay": true,
+    "emissive_overlay": false,
     "texture_atlas_candidates": [256, 512]
   }
 }

@@ -2,36 +2,25 @@
   "format_version": "1.8.0",
   "render_controllers": {
     "controller.render.pinene.jellyfish_boss.shell": {
-      "geometry": "geometry.shell",
+      "geometry": "variable.jellyfish_far ? Geometry.shell_far : Geometry.shell",
       "materials": [
         {
-          "*": "material.shell"
+          "*": "Material.shell"
         }
       ],
       "textures": [
-        "texture.shell"
+        "Texture.shell"
       ]
     },
     "controller.render.pinene.jellyfish_boss.tissue": {
-      "geometry": "geometry.tissue",
+      "geometry": "variable.jellyfish_far ? Geometry.tissue_far : Geometry.tissue",
       "materials": [
         {
-          "*": "material.tissue"
+          "*": "Material.tissue"
         }
       ],
       "textures": [
-        "texture.tissue"
-      ]
-    },
-    "controller.render.pinene.jellyfish_boss.glow": {
-      "geometry": "geometry.glow",
-      "materials": [
-        {
-          "*": "material.glow"
-        }
-      ],
-      "textures": [
-        "texture.glow"
+        "Texture.tissue"
       ]
     }
   }
