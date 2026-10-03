@@ -89,7 +89,7 @@ for y in range(360):
         print('BAKE bell rows', y, flush=True)
 
 for obj in sorted(bpy.data.objects, key=lambda o:o.name):
-    if not obj.get('jf_export_cube') or obj.get('jf_surface_panel') or obj.get('jf_reuse_uv'):
+    if not obj.get('jf_export_cube') or obj.name.startswith('JF_Bell_') or obj.get('jf_reuse_uv'):
         continue
     role = 'shell' if obj.name.startswith('JF_outer_') else 'tissue'
     u0,v0,w,h = map(int,obj['jf_uv_rect'])

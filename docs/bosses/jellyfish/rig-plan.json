@@ -1,6 +1,6 @@
 {
-  "schema_version": 9,
-  "status": "v19_central_connection_model_review_pending",
+  "schema_version": 10,
+  "status": "v20_flared_connection_model_review_pending",
   "movement_mode": "airborne",
   "source_policy": {
     "preserve_archived_sources": true,
@@ -55,8 +55,9 @@
     },
     "root_attachments": "rim_panels_and_inner_core",
     "floating_curtain_posts_replaced": 12,
-    "central_connection_cuboids": 3,
-    "central_connection": "inner_core_to_rendered_inner_bell_face"
+    "central_connection_cuboids": 96,
+    "central_connection": "upward_flared_membrane_to_32_inner_bell_faces",
+    "central_connection_far_cuboids": 32
   },
   "idle_animation": {
     "identifier": "animation.pinene.jellyfish_boss.idle",
@@ -75,7 +76,7 @@
   "bedrock_export": {
     "format_version": "1.12.0",
     "shell_geometry_cuboids": 384,
-    "tissue_geometry_cuboids": 145,
+    "tissue_geometry_cuboids": 238,
     "emissive_geometry_cuboids": 0,
     "surface_panels": 256,
     "open_ended_segments": 248,
@@ -117,11 +118,12 @@
     "normal_encounter_boss_count": 1,
     "tentacle_cuboids": 248,
     "bell_cuboids": 256,
-    "inner_body_and_skirt_cuboids": 25,
-    "final_total_cuboids": 529,
-    "maximum_rendered_triangles": 3308,
-    "far_cuboids": 177,
-    "far_triangles": 1132,
+    "inner_body_and_skirt_cuboids": 22,
+    "central_funnel_cuboids": 96,
+    "final_total_cuboids": 622,
+    "maximum_rendered_triangles": 3656,
+    "far_cuboids": 206,
+    "far_triangles": 1224,
     "lod_switch_distance_blocks": 80,
     "lod_switching_not_yet_wired": false,
     "texture_atlas": [

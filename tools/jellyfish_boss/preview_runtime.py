@@ -8,10 +8,11 @@ from mathutils import Vector, Matrix, Euler
 
 args = sys.argv[sys.argv.index('--')+1:]
 if len(args) not in (4,5,6):
-    raise SystemExit('Usage: blender -b --python preview_runtime.py -- GEOMETRY TEXTURES OUTPUT.png ANIMATION.json [still|loop] [front|underside]')
+    raise SystemExit('Usage: blender -b --python preview_runtime.py -- GEOMETRY TEXTURES OUTPUT.png ANIMATION.json [still|loop] [front|underside|connection]')
 geometry_path, textures, output, animation_path = map(os.path.abspath,args[:4])
 LOOP = len(args) >= 5 and args[4] == 'loop'
 UNDERSIDE = len(args) == 6 and args[5] == 'underside'
+CONNECTION = len(args) == 6 and args[5] == 'connection'
 if LOOP:
     os.makedirs(output,exist_ok=True)
 for obj in list(bpy.data.objects):
@@ -179,10 +180,11 @@ target = Vector((0,0,.02))
 cam_data = bpy.data.cameras.new('camera')
 cam = bpy.data.objects.new('camera',cam_data)
 bpy.context.collection.objects.link(cam)
-cam.location = (1.3,-4.0,-2.2) if UNDERSIDE else (1.3,-4.0,.70)
-cam.rotation_euler = (target-cam.location).to_track_quat('-Z','Y').to_euler()
+cam.location = (1.3,-4.0,-2.2) if UNDERSIDE or CONNECTION else (1.3,-4.0,.70)
+focus = Vector((0,0,.60)) if CONNECTION else target
+cam.rotation_euler = (focus-cam.location).to_track_quat('-Z','Y').to_euler()
 cam_data.type = 'ORTHO'
-cam_data.ortho_scale = 2.45
+cam_data.ortho_scale = 1.15 if CONNECTION else 2.45
 scene.camera = cam
 for name,location,energy,color,size in [
     ('key',(2,-3,3),160,(.78,.92,1),3),

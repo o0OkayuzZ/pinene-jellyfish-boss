@@ -80,26 +80,32 @@ if connection:
         low = Vector(cube["origin"])
         high = low+Vector(cube["size"])
         return Vector([max(a-v,0,v-b) for v,a,b in zip(local,low,high)]).length
-    links = connection["segments"]
-    assert len(links) == 3
-    connection_gap = inside_exported(position(links[0]["start"]),connection["core"])
-    for index,link in enumerate(links):
-        for endpoint in ("start","end"):
-            p = position(link[endpoint])
-            connection_gap = max(connection_gap,inside_exported(p,link["object"]))
-        if index:
-            p = position(link["start"])
-            connection_gap = max(connection_gap,inside_exported(p,links[index-1]["object"]))
-    # Check the complete terminal cap against the exported inner north face.
-    cube,rotation,pivot = exported_object(links[-1]["object"])
-    panel,panel_rotation,panel_pivot = exported_object(connection["bell_panel"])
-    low,high = Vector(cube["origin"]),Vector(cube["origin"])+Vector(cube["size"])
-    for x in (low.x,high.x):
-        for z in (low.z,high.z):
-            p = pivot+rotation@(Vector((x,high.y,z))-pivot)
-            connection_gap = max(connection_gap,inside_exported(p,connection["bell_panel"]))
-            local = panel_pivot+panel_rotation.transposed()@(p-panel_pivot)
-            terminal_plane_error = max(terminal_plane_error,abs(local.z-panel["origin"][2]-connection["terminal_inset"]*152))
+    spokes = connection.get("spokes",[connection])
+    if connection.get("shape") == "upward_flared_membrane":
+        assert len(spokes) == 32
+    for spoke in spokes:
+        links = spoke["segments"]
+        assert len(links) == 3
+        connection_gap = max(connection_gap,inside_exported(position(links[0]["start"]),connection["core"]))
+        if connection.get("shape") == "upward_flared_membrane":
+            assert math.hypot(*spoke["tip"][:2]) > math.hypot(*links[0]["start"][:2])*2
+        for index,link in enumerate(links):
+            for endpoint in ("start","end"):
+                p = position(link[endpoint])
+                connection_gap = max(connection_gap,inside_exported(p,link["object"]))
+            if index:
+                p = position(link["start"])
+                connection_gap = max(connection_gap,inside_exported(p,links[index-1]["object"]))
+        # Every upper edge fits the actual exported inner north face.
+        cube,rotation,pivot = exported_object(links[-1]["object"])
+        panel,panel_rotation,panel_pivot = exported_object(spoke["bell_panel"])
+        low,high = Vector(cube["origin"]),Vector(cube["origin"])+Vector(cube["size"])
+        for x in (low.x,high.x):
+            for z in (low.z,high.z):
+                p = pivot+rotation@(Vector((x,high.y,z))-pivot)
+                connection_gap = max(connection_gap,inside_exported(p,spoke["bell_panel"]))
+                local = panel_pivot+panel_rotation.transposed()@(p-panel_pivot)
+                terminal_plane_error = max(terminal_plane_error,abs(local.z-panel["origin"][2]-spoke["terminal_inset"]*152))
     assert connection_gap < .002, connection_gap
     assert terminal_plane_error < .002, terminal_plane_error
 def sample(channel,time,default):
@@ -159,7 +165,8 @@ report = {
     "maximum_root_to_support_box_gap_model_units":max_attachment_box_gap,
     "maximum_root_anchor_roundtrip_error_model_units":max_anchor_roundtrip,
     "root_attachments":attachments,
-    "verified_core_connection_links":len(connection.get("segments",[])),
+    "verified_core_connection_links":sum(len(s["segments"]) for s in connection.get("spokes",[connection]) if "segments" in s),
+    "verified_core_bell_contacts":len(connection.get("spokes",[])),
     "maximum_core_connection_gap_model_units":connection_gap,
     "maximum_terminal_inner_face_plane_error_model_units":terminal_plane_error,
     "core_connection":connection,
