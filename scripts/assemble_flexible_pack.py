@@ -1,4 +1,4 @@
-"""Install v20 geometry and atlas, retaining the accepted v17 motion."""
+"""Install v21 geometry and atlas, retaining the accepted v17 motion."""
 import copy, json, shutil
 from pathlib import Path
 
@@ -13,11 +13,11 @@ def save(path, value):
     path.parent.mkdir(parents=True,exist_ok=True)
     path.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 
-near = load(GEN/'jellyfish_boss_v20.geo.json')
-far = load(GEN/'jellyfish_boss_v20_far.geo.json')
+near = load(GEN/'jellyfish_boss_v21.geo.json')
+far = load(GEN/'jellyfish_boss_v21_far.geo.json')
 near['minecraft:geometry'].extend(far['minecraft:geometry'])
 save(RP/'models/entity/jellyfish_boss.geo.json',near)
-for path in (GEN/'v20_textures').iterdir():
+for path in (GEN/'v21_textures').iterdir():
     if path.is_file():
         shutil.copy2(path,RP/'textures/entity/pinene'/path.name)
 
@@ -64,7 +64,7 @@ save(RP/'animation_controllers/jellyfish_boss.lod.json',{
 behavior = load(BP/'entities/jellyfish_boss.behavior.json')
 behavior['minecraft:entity']['components']['minecraft:scale']['value'] = 1.0
 save(BP/'entities/jellyfish_boss.behavior.json',behavior)
-version = [0,1,5]
+version = [0,1,6]
 for folder in (BP,RP):
     manifest = load(folder/'manifest.json')
     manifest['header']['version'] = version
@@ -75,7 +75,7 @@ for folder in (BP,RP):
             dependency['version'] = version
     save(folder/'manifest.json',manifest)
 
-report = {'revision':'v20','runtime_scale':1.0,'baked_visual_scale':9.5,
+report = {'revision':'v21','runtime_scale':1.0,'baked_visual_scale':9.5,
           'render_layers':2,'lod_switch_blocks':80,'independent_tentacles':16,
           'measured_fps':None,'near_animated_bones':113,
           'near_joint_counts':{'outer':8,'inner':6},'tentacle_period_seconds':6,
@@ -85,11 +85,11 @@ for item in near['minecraft:geometry']:
     report['geometries'][item['description']['identifier']] = {
         'cubes':len(cubes),'triangles':sum(len(c['uv'])*2 for c in cubes),
         'bones':len(item['bones'])}
-save(GEN/'jellyfish_boss_v20_report.json',report)
+save(GEN/'jellyfish_boss_v21_report.json',report)
 rig_path = ROOT/'docs/bosses/jellyfish/rig-plan.json'
 rig = load(rig_path)
-rig['schema_version'] = 10
-rig['status'] = 'v20_flared_connection_model_review_pending'
+rig['schema_version'] = 11
+rig['status'] = 'v21_blended_connection_model_review_pending'
 rig['skeleton'].update(tentacle_bone_count=112,total_bone_count=114)
 for chain in rig['skeleton']['tentacles']:
     joints = 8 if chain['class'] == 'outer' else 6
@@ -111,7 +111,8 @@ rig['continuity']['inner_frill_cubes_per_bone'] = 0
 rig['continuity'].update(root_attachments='rim_panels_and_inner_core',
                          floating_curtain_posts_replaced=12)
 rig['continuity'].update(central_connection_cuboids=96,central_connection_far_cuboids=32,
-                         central_connection='upward_flared_membrane_to_32_inner_bell_faces')
+                         central_connection='upward_flared_membrane_to_32_inner_bell_faces',
+                         central_connection_root_blend='embedded_lower_foot_with_eight_soft_folds')
 rig['workflow_stage'] = {'current':'model_root_attachment_review',
                         'next':'animation_and_behavior_cleanup'}
 rig['bedrock_export'] = {'format_version':'1.12.0','shell_geometry_cuboids':384,

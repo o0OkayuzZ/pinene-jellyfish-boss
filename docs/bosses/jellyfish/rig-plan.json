@@ -1,6 +1,6 @@
 {
-  "schema_version": 10,
-  "status": "v20_flared_connection_model_review_pending",
+  "schema_version": 11,
+  "status": "v21_blended_connection_model_review_pending",
   "movement_mode": "airborne",
   "source_policy": {
     "preserve_archived_sources": true,
@@ -57,7 +57,8 @@
     "floating_curtain_posts_replaced": 12,
     "central_connection_cuboids": 96,
     "central_connection": "upward_flared_membrane_to_32_inner_bell_faces",
-    "central_connection_far_cuboids": 32
+    "central_connection_far_cuboids": 32,
+    "central_connection_root_blend": "embedded_lower_foot_with_eight_soft_folds"
   },
   "idle_animation": {
     "identifier": "animation.pinene.jellyfish_boss.idle",

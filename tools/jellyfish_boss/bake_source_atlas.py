@@ -99,7 +99,17 @@ for obj in sorted(bpy.data.objects, key=lambda o:o.name):
     for y in range(h):
         for x in range(w):
             local = Vector((((x+.5)/w-.5)*dims.x, -dims.y*.5, (.5-(y+.5)/h)*dims.z))
-            color = nearest_color(center+rotation@local)
+            point = center+rotation@local
+            if obj.name.startswith('JF_Core_Link_'):
+                # The new membrane occupies space above the archived oral
+                # tissue. Sampling there would pick unrelated bell colors.
+                # Continue the actual oral-stalk palette over the new shape.
+                point.z = .16+(point.z-.16)*(.34/.735)
+                radius = math.hypot(point.x,point.y)
+                if radius > .16:
+                    point.x *= .16/radius
+                    point.y *= .16/radius
+            color = nearest_color(point)
             rgb = np.clip(color[:3]*255,0,255)
             # Broad inner roots stay dark. Thin ribbons inherit the source's
             # mottled magenta, avoiding a uniformly hot-pink center.

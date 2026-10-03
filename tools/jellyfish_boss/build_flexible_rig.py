@@ -588,7 +588,7 @@ from attach_central_core import add_central_connection
 add_central_connection()
 scene["jf_segment_records"] = json.dumps(segment_records)
 scene["jf_attachment_records"] = json.dumps(attachments)
-scene["jf_revision"] = "v20"
+scene["jf_revision"] = "v21"
 # Exported JSON animation is authoritative. Native previews must also be
 # rendered from that JSON, rather than an unrelated Blender rig action.
 scene.frame_start, scene.frame_end = 1, 121

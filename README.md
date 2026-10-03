@@ -4,18 +4,18 @@ Minecraft Bedrock向けの空中型ボスクラゲ単体パックです。
 旧3Dモデルを基準に、暗い半透明の傘、赤紫の内部組織、
 シアンの発光模様と、独立して揺れる16本の触手を再構成しています。
 
-![Jellyfish Boss runtime-geometry preview](docs/bosses/jellyfish/generated/jellyfish_boss_v20_runtime.png)
+![Jellyfish Boss runtime-geometry preview](docs/bosses/jellyfish/generated/jellyfish_boss_v21_runtime.png)
 
-![Upward-flaring connection close-up](docs/bosses/jellyfish/generated/jellyfish_boss_v20_connection.png)
+![Blended oral-tissue connection close-up](docs/bosses/jellyfish/generated/jellyfish_boss_v21_connection.png)
 
 プレビューは書き出したBedrock JSONと実際のテクスチャから描画したものです。
 Minecraft内のスクリーンショットではなく、照明・PBR表現は近似です。
 
 ## 現在の状態
 
-- v0.1.5 / v20 中央の結合部を上に広がる曲面へ作り直した開発版
-- 下は細く上は丸く広がる膜で、傘の内面の周囲32か所へ接続
-- 傘と触手の形・動き・既存テクスチャは維持し、結合部のみに形と模様を追加
+- v0.1.6 / v21 中央の膜と触手の束の境目をなじませた開発版
+- 下端を中央組織へ埋め込み、8方向の浅いひだから上へ広がる膜で、傘の内面の周囲32か所へ接続
+- 結合部の形と専用UV領域だけを調整し、旧GLBの中央組織の色を連続して投影
 - 外側は傘の縁、中央は内部組織へ接続し、浮いた黒いパーツを付け根へ再配置
 - 近距離622 cuboids / 3,656 triangles（従来1,136 / 9,176）
 - 80ブロック超では206 cuboids / 1,224 trianglesの遠距離モデル
@@ -36,15 +36,16 @@ Minecraft内のスクリーンショットではなく、照明・PBR表現は�
 - v18は481姿勢と16本すべての付け根を検査し、下面のプレビューを確認
 - v18の実機動画で中央組織と傘の間の隙間を確認
 - v19の実機画像を受けて、段状の結合部を上に広がる曲面へ修正
-- v20は96区間と32か所すべての内面接続を検証し、481姿勢を確認
-- v20の実機の接続表示・FPS・透過・LOD切替は再確認待ち
+- v21は96区間と32か所すべての内面接続を検証し、481姿勢を確認
+- v20の実機画像で細い首と色の境界が目立つことを確認し、v21で下端の形と色の投影を修正
+- v21の実機の接続表示・FPS・透過・LOD切替は再確認待ち
 - 形の確認後にアニメーションと挙動の整理へ移る予定
-- v20はv19より描画面数が約11%増加。関節数・描画層数・テクスチャ寸法は維持し、FPSは実機で確認
+- v21はv20と同じ描画面数・関節数・描画層数・テクスチャ寸法。FPSの数値は実機未測定
 
 ## 導入と確認
 
 1. `py -3 scripts/package_mcaddon.py` を実行します。
-2. `dist/pinene-jellyfish-boss-v0.1.5.mcaddon` をMinecraftで開きます。
+2. `dist/pinene-jellyfish-boss-v0.1.6.mcaddon` をMinecraftで開きます。
 3. ワールドへBPとRPを適用します。
 4. クリエイティブのアイテム欄から「ボスクラゲのスポーンエッグ」を使うか、次のコマンドで召喚します。
 
@@ -68,4 +69,4 @@ py -3 scripts/package_mcaddon.py
 `resource_pack/` と `behavior_pack/` は実機投入対象です。
 生成処理は `tools/jellyfish_boss/` にあります。
 
-再生成手順と比較条件は [v20-build.md](docs/bosses/jellyfish/v20-build.md) を参照してください。
+再生成手順と比較条件は [v21-build.md](docs/bosses/jellyfish/v21-build.md) を参照してください。

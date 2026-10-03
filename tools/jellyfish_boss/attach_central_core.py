@@ -30,8 +30,11 @@ def add_central_connection():
         shoulder = tip+inward*.18
         theta = (sector+.5)/sectors*math.tau
         radial = Vector((math.cos(theta),math.sin(theta),0))
-        base = Vector(core["jf_center"])+core_rotation@Vector((.098*math.cos(theta),.078*math.sin(theta),.195))
-        waist = radial*.14+Vector((0,0,.51))
+        # Bury the foot inside the oral tissue instead of ending in a thin
+        # neck above it. Small folds follow the eight oral-arm directions.
+        fold = .006*math.cos(theta*8-.35)
+        base = Vector(core["jf_center"])+core_rotation@Vector(((.107+fold)*math.cos(theta),(.086+fold)*math.sin(theta),.035+.012*math.sin(theta*3+.2)))
+        waist = radial*(.153+.005*math.cos(theta*8-.35))+Vector((0,0,.46))
         points = [base,waist,shoulder,tip] if near else [base,shoulder,tip]
         segments = []
         for span,(start,end) in enumerate(zip(points,points[1:])):
@@ -79,9 +82,10 @@ def add_central_connection():
         spokes.append({"bell_panel":panel.name,"segments":segments,"tip":list(tip),"terminal_inset":inset})
     record = {"shape":"upward_flared_membrane","core":core.name,"bone":"bell",
               "attachment_height":.895,"sectors":sectors,"spokes":spokes,
-              "surface_panels":sum(len(s["segments"]) for s in spokes)}
+              "surface_panels":sum(len(s["segments"]) for s in spokes),
+              "root_blend":"embedded_lower_foot_with_eight_soft_folds"}
     scene["jf_core_connection"] = json.dumps(record)
-    scene["jf_revision"] = "v20"
+    scene["jf_revision"] = "v21"
     print("CENTRAL_CONNECTION",json.dumps({k:v for k,v in record.items() if k!="spokes"}),flush=True)
     return record
 
