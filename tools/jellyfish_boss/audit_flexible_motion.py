@@ -29,6 +29,7 @@ for geo in geometries:
             assert bone["pivot"] == bones[bone["name"]]["pivot"]
         bones[bone["name"]] = bone
 records = json.loads(bpy.context.scene["jf_segment_records"])
+attachments = json.loads(bpy.context.scene.get("jf_attachment_records","[]"))
 chains = {}
 for rec in records:
     if rec["name"].startswith(("JF_outer_","JF_inner_")):
@@ -37,6 +38,29 @@ for rec in records:
 assert len(chains) == 16
 def position(p):
     return Vector((p[0]*152,(p[2]+1)*152,-p[1]*152))
+max_attachment_box_gap = 0
+max_anchor_roundtrip = 0
+near_cubes = [c for g in geometries if not g["description"]["identifier"].endswith("_far")
+              for b in g["bones"] for c in b.get("cubes",[])]
+if attachments:
+    assert len(attachments) == 16
+    for attachment in attachments:
+        root = Vector(bones[attachment["bone"]]["pivot"])
+        max_anchor_roundtrip = max(max_anchor_roundtrip,(root-position(attachment["anchor"])).length)
+        support = bpy.data.objects[attachment["support"]]
+        center = position(support["jf_center"])
+        cube = min(near_cubes,key=lambda c:(Vector(c["origin"])+Vector(c["size"])*.5-center).length)
+        assert (Vector(cube["origin"])+Vector(cube["size"])*.5-center).length < .002
+        x,y,z = map(math.radians,cube.get("rotation",[0,0,0]))
+        rotation = Euler((-x,y,-z),"XYZ").to_matrix()
+        pivot = Vector(cube.get("pivot",[0,0,0]))
+        local = pivot + rotation.transposed() @ (root-pivot)
+        low = Vector(cube["origin"])
+        high = low+Vector(cube["size"])
+        delta = Vector([max(a-v,0,v-b) for v,a,b in zip(local,low,high)])
+        max_attachment_box_gap = max(max_attachment_box_gap,delta.length)
+    assert max_attachment_box_gap < .002, max_attachment_box_gap
+    assert max_anchor_roundtrip < .002, max_anchor_roundtrip
 def sample(channel,time,default):
     if not channel:
         return default
@@ -84,12 +108,16 @@ for bone in idle["bones"].values():
         seam_velocity_change = max(seam_velocity_change,abs((b-a)-(d-c))/.125)
 assert seam_velocity_change < 1.5, seam_velocity_change
 report = {
-    "revision":"v17","sampled_poses":sample_count,
+    "revision":bpy.context.scene.get("jf_revision","v17"),"sampled_poses":sample_count,
     "independent_tentacles":16,"near_animated_bones":113,
     "maximum_centerline_joint_gap_model_units":max_gap,
     "maximum_centerline_radius_blocks":max_radius,
     "centerline_y_blocks":[min_y,max_y],
     "maximum_loop_velocity_change_degrees_per_second":seam_velocity_change,
+    "verified_root_attachments":len(attachments),
+    "maximum_root_to_support_box_gap_model_units":max_attachment_box_gap,
+    "maximum_root_anchor_roundtrip_error_model_units":max_anchor_roundtrip,
+    "root_attachments":attachments,
     "scope":"Exported pivot math; excludes engine/material/FPS verification"}
 with open(out_path,"w",encoding="utf-8") as f:
     json.dump(report,f,indent=2)

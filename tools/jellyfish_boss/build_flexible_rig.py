@@ -1,5 +1,5 @@
 import bpy, bmesh, json, math, os, sys
-from mathutils import Vector, Matrix
+from mathutils import Euler, Vector, Matrix
 from mathutils.bvhtree import BVHTree
 
 args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
@@ -31,11 +31,45 @@ source_polygons = [tuple(p.vertices) for p in visual_source.data.polygons]
 source_bvh = BVHTree.FromPolygons(source_vertices, source_polygons)
 PEAK = max(v.z for v in source_vertices)
 RIM = 0.355
+CORE_CENTER = Vector((0,0,.13))
+CORE_DIMENSIONS = Vector((.26,.22,.44))
+CORE_ROTATION = Euler((.04,-.08,.18),"XYZ").to_quaternion()
 
 def source_radius(theta, height, fallback):
     radial = Vector((math.cos(theta), math.sin(theta), 0))
     hit, _, _, _ = source_bvh.ray_cast(radial * 1.3 + Vector((0, 0, height)), -radial, 1.3)
+    # Below an uneven lip, recover the outer bell rather than an oral arm.
+    if height < .43 and (hit is None or math.hypot(hit.x,hit.y) < .52):
+        candidate, _, _, _ = source_bvh.find_nearest(radial*.57+Vector((0,0,height)))
+        if candidate and math.hypot(candidate.x,candidate.y) > .52:
+            hit = candidate
     return min(0.63, max(0.008, math.hypot(hit.x, hit.y))) if hit else fallback
+
+def outer_root_surface(theta):
+    # Use the actual near model's lowest panel, rather than an arbitrary ring
+    # hanging in the hollow bell. Both LOD skeletons keep this same anchor.
+    sectors = 32
+    sector = int((theta % math.tau) / math.tau * sectors)
+    angle = math.tau*(sector+.5)/sectors
+    radial = Vector((math.cos(angle),math.sin(angle),0))
+    tangent = Vector((-radial.y,radial.x,0))
+    heights = [RIM, RIM+(PEAK-RIM)*.11]
+    radii = []
+    for height in heights:
+        fallback = source_radius(0,height,.57)
+        radii.append(sum(source_radius(angle+step*math.tau/sectors*.25,height,fallback)*weight
+                         for step,weight in ((-1,.25),(0,.5),(1,.25))))
+    u = .007/(heights[1]-heights[0])
+    radius = radii[0]*(1-u)+radii[1]*u
+    point = radial*radius + tangent*(radius*math.tan(theta-angle))
+    point.z = RIM+.007
+    return point, f"JF_Bell_{sector+1:02d}_01"
+
+def inner_root_surface(point):
+    local = CORE_ROTATION.conjugated() @ (point-CORE_CENTER)
+    local = Vector(min(max(v,-d*.5+.006),d*.5-.006)
+                   for v,d in zip(local,CORE_DIMENSIONS))
+    return CORE_CENTER + CORE_ROTATION @ local
 
 def set_input(bsdf, name, value):
     socket = bsdf.inputs.get(name)
@@ -216,6 +250,7 @@ bell.head, bell.tail = (0, 0, 0.30), (0, 0, 0.78)
 bell.parent = root
 
 chains = []
+attachments = []
 for kind, count in (("outer", 8), ("inner", 8)):
     for i in range(count):
         theta = 2.0 * math.pi * i / count
@@ -247,7 +282,19 @@ for kind, count in (("outer", 8), ("inner", 8)):
                 radial * (r + 0.10) + tangent * (0.19 * math.sin(phase + 1.1)) + Vector((0, 0, -0.64 - 0.14 * math.cos(phase))),
             ]
             widths = [0.110, 0.085, 0.055]
-        # Smooth centerlines retain the source anchors, with more short joints.
+        initial_root = points[0].copy()
+        if kind == "outer":
+            attached_root, support_name = outer_root_surface(theta)
+        else:
+            attached_root, support_name = inner_root_surface(initial_root), "JF_Core_Center"
+        delta = attached_root-initial_root
+        points[0] = attached_root
+        points[1] += delta*.25
+        attachments.append({"kind":kind,"index":i+1,
+                            "bone":f"tentacle_{kind}_{i+1:02d}_01",
+                            "initial_anchor":list(initial_root),
+                            "anchor":list(attached_root),"support":support_name})
+        # Only the proximal anchors change; distal curves retain v17's shape.
         anchors, anchor_widths = points, widths + [widths[-1] * .46]
         joint_count = 8 if kind == "outer" else 6
         def sample_curve(u):
@@ -339,8 +386,8 @@ def add_body_lobe(name, location, dimensions, rotation, material, bevel_width):
 
 # Irregular inner tissue remains readable through the translucent shell without
 # turning the boss into a single obvious cube.
-add_body_lobe("Core_Center", (0.00, 0.00, 0.13), (0.26, 0.22, 0.44),
-              (0.04, -0.08, 0.18), core_material, 0.052)
+add_body_lobe("Core_Center", CORE_CENTER, CORE_DIMENSIONS,
+              CORE_ROTATION.to_euler("XYZ"), core_material, 0.052)
 add_body_lobe("Core_Left", (-0.14, -0.01, 0.08), (0.14, 0.11, 0.43),
               (-0.24, 0.30, -0.42), violet, 0.036)
 add_body_lobe("Core_Right", (0.14, 0.025, 0.09), (0.14, 0.11, 0.45),
@@ -368,14 +415,14 @@ for i in range(4):
         rotation, core_material if i % 2 == 0 else violet, 0.026
     )
 
-# Uneven oral curtain hides the hard join between bell and articulated chains.
+# The former twelve floating curtain blocks become collars at actual roots.
+# Eight surround the rim filaments; four join the central oral arms to the core.
 for i in range(12):
-    theta = 2.0 * math.pi * i / 12.0
-    radius = 0.39 + 0.018 * math.sin(i * 1.73)
-    location = (math.cos(theta) * radius, math.sin(theta) * radius,
-                0.305 - 0.014 * (i % 3))
-    dimensions = (0.044 + 0.009 * (i % 2), 0.026, 0.12 + 0.026 * ((i + 1) % 3))
-    rotation = (0.09 * math.sin(theta), 0.08 * math.cos(theta), theta)
+    chain = chains[i] if i < 8 else chains[8+(i-8)*2]
+    axis = (chain["points"][1]-chain["points"][0]).normalized()
+    location = chain["points"][0]+axis*(.014 if i < 8 else .018)
+    dimensions = (.046,.025,.062) if i < 8 else (.085,.040,.065)
+    rotation = axis.to_track_quat("Z","Y").to_euler("XYZ")
     skirt_material = core_material if i % 3 else violet
     add_body_lobe(f"Skirt_{i + 1:02d}", location, dimensions, rotation,
                   skirt_material, 0.009)
@@ -536,7 +583,8 @@ for index,obj in enumerate(body_objects,120):
 
 scene = bpy.context.scene
 scene["jf_segment_records"] = json.dumps(segment_records)
-scene["jf_revision"] = "v17"
+scene["jf_attachment_records"] = json.dumps(attachments)
+scene["jf_revision"] = "v18"
 # Exported JSON animation is authoritative. Native previews must also be
 # rendered from that JSON, rather than an unrelated Blender rig action.
 scene.frame_start, scene.frame_end = 1, 121

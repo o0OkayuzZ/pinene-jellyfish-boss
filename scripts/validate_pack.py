@@ -111,7 +111,7 @@ for item in animation['animations'].values():
             assert pairs[0][1] == pairs[-1][1]
             assert all(b-a <= .125001 for (a,_),(b,_) in zip(pairs,pairs[1:]))
 assert lod['animation_controllers']['controller.animation.pinene.jellyfish_boss.lod']['states']['near']['animations'] == ['idle','pulse']
-assert bp_manifest['header']['version'] == rp_manifest['header']['version'] == [0,1,2]
+assert bp_manifest['header']['version'] == rp_manifest['header']['version'] == [0,1,3]
 rig = load(ROOT/'docs/bosses/jellyfish/rig-plan.json')
 assert rig['skeleton']['tentacle_bone_count'] == len(idle['bones']) == 112
 assert rig['skeleton']['total_bone_count'] == len(near_names) == 114

@@ -1,6 +1,6 @@
 {
-  "schema_version": 7,
-  "status": "v17_flexible_tentacles_runtime_test_pending",
+  "schema_version": 8,
+  "status": "v18_root_attachments_model_review_pending",
   "movement_mode": "airborne",
   "source_policy": {
     "preserve_archived_sources": true,
@@ -52,7 +52,9 @@
     "near_joint_counts": {
       "outer": 8,
       "inner": 6
-    }
+    },
+    "root_attachments": "rim_panels_and_inner_core",
+    "floating_curtain_posts_replaced": 12
   },
   "idle_animation": {
     "identifier": "animation.pinene.jellyfish_boss.idle",
@@ -126,5 +128,9 @@
     ],
     "render_layers": 2,
     "measured_fps": null
+  },
+  "workflow_stage": {
+    "current": "model_root_attachment_review",
+    "next": "animation_and_behavior_cleanup"
   }
 }

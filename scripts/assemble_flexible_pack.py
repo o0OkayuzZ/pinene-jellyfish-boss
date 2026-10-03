@@ -1,4 +1,4 @@
-"""Install generated v17 assets into the standalone pack; no world edits."""
+"""Install generated v18 assets into the standalone pack; no world edits."""
 import copy, json, shutil
 from pathlib import Path
 
@@ -13,11 +13,11 @@ def save(path, value):
     path.parent.mkdir(parents=True,exist_ok=True)
     path.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 
-near = load(GEN/'jellyfish_boss_v17.geo.json')
-far = load(GEN/'jellyfish_boss_v17_far.geo.json')
+near = load(GEN/'jellyfish_boss_v18.geo.json')
+far = load(GEN/'jellyfish_boss_v18_far.geo.json')
 near['minecraft:geometry'].extend(far['minecraft:geometry'])
 save(RP/'models/entity/jellyfish_boss.geo.json',near)
-for path in (GEN/'v17_textures').iterdir():
+for path in (GEN/'v18_textures').iterdir():
     if path.is_file():
         shutil.copy2(path,RP/'textures/entity/pinene'/path.name)
 
@@ -47,7 +47,7 @@ for role in ('shell','tissue'):
     }
 save(RP/'render_controllers/jellyfish_boss.render_controllers.json',
      {'format_version':'1.8.0','render_controllers':controllers})
-animation = load(GEN/'jellyfish_boss_v17.animation.json')
+animation = load(GEN/'jellyfish_boss_v17.animation.json')  # Carry forward the approved motion.
 save(RP/'animations/jellyfish_boss.animation.json',animation)
 save(RP/'animation_controllers/jellyfish_boss.lod.json',{
     'format_version':'1.10.0','animation_controllers':{
@@ -64,7 +64,7 @@ save(RP/'animation_controllers/jellyfish_boss.lod.json',{
 behavior = load(BP/'entities/jellyfish_boss.behavior.json')
 behavior['minecraft:entity']['components']['minecraft:scale']['value'] = 1.0
 save(BP/'entities/jellyfish_boss.behavior.json',behavior)
-version = [0,1,2]
+version = [0,1,3]
 for folder in (BP,RP):
     manifest = load(folder/'manifest.json')
     manifest['header']['version'] = version
@@ -75,7 +75,7 @@ for folder in (BP,RP):
             dependency['version'] = version
     save(folder/'manifest.json',manifest)
 
-report = {'revision':'v17','runtime_scale':1.0,'baked_visual_scale':9.5,
+report = {'revision':'v18','runtime_scale':1.0,'baked_visual_scale':9.5,
           'render_layers':2,'lod_switch_blocks':80,'independent_tentacles':16,
           'measured_fps':None,'near_animated_bones':113,
           'near_joint_counts':{'outer':8,'inner':6},'tentacle_period_seconds':6,
@@ -85,11 +85,11 @@ for item in near['minecraft:geometry']:
     report['geometries'][item['description']['identifier']] = {
         'cubes':len(cubes),'triangles':sum(len(c['uv'])*2 for c in cubes),
         'bones':len(item['bones'])}
-save(GEN/'jellyfish_boss_v17_report.json',report)
+save(GEN/'jellyfish_boss_v18_report.json',report)
 rig_path = ROOT/'docs/bosses/jellyfish/rig-plan.json'
 rig = load(rig_path)
-rig['schema_version'] = 7
-rig['status'] = 'v17_flexible_tentacles_runtime_test_pending'
+rig['schema_version'] = 8
+rig['status'] = 'v18_root_attachments_model_review_pending'
 rig['skeleton'].update(tentacle_bone_count=112,total_bone_count=114)
 for chain in rig['skeleton']['tentacles']:
     joints = 8 if chain['class'] == 'outer' else 6
@@ -108,6 +108,10 @@ rig['continuity'].update(visual_cubes_per_main_segment=2,
     secondary_ribbon_cuboids=24,curve='Catmull-Rom centerlines',
     near_joint_counts={'outer':8,'inner':6})
 rig['continuity']['inner_frill_cubes_per_bone'] = 0
+rig['continuity'].update(root_attachments='rim_panels_and_inner_core',
+                         floating_curtain_posts_replaced=12)
+rig['workflow_stage'] = {'current':'model_root_attachment_review',
+                        'next':'animation_and_behavior_cleanup'}
 rig['bedrock_export'] = {'format_version':'1.12.0','shell_geometry_cuboids':384,
     'tissue_geometry_cuboids':142,'emissive_geometry_cuboids':0,
     'surface_panels':256,'open_ended_segments':248,'poly_mesh_used':False}

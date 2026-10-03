@@ -66,6 +66,10 @@ for y in range(360):
         theta = (x+.5)/512*math.tau
         radial = Vector((math.cos(theta),math.sin(theta),0))
         hit, _, index, _ = bvh.ray_cast(radial*1.3+Vector((0,0,height)),-radial,1.3)
+        if height < .43 and (hit is None or math.hypot(hit.x,hit.y) < .52):
+            candidate, _, candidate_index, _ = bvh.find_nearest(radial*.57+Vector((0,0,height)))
+            if candidate and math.hypot(candidate.x,candidate.y) > .52:
+                hit, index = candidate, candidate_index
         color = source_color(hit,index) if hit else nearest_color(radial*.03+Vector((0,0,height)))
         if hit:
             normal = barycentric_transform(hit,*triangles[index],*triangle_normals[index]).normalized()
