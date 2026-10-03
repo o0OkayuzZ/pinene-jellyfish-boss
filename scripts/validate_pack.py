@@ -68,8 +68,8 @@ far_geometries = [g for g in geometries if g['description']['identifier'].endswi
 def counts(items):
     active = [c for g in items for b in g['bones'] for c in b.get('cubes',[])]
     return len(active),sum(len(c['uv'])*2 for c in active)
-assert counts(near_geometries) == (526,3272)
-assert counts(far_geometries) == (174,1096)
+assert counts(near_geometries) == (529,3308)
+assert counts(far_geometries) == (177,1132)
 assert sum(len(g['bones']) for g in near_geometries) == 116
 assert len(client['minecraft:client_entity']['description']['render_controllers']) == 2
 controllers = load(RP/'render_controllers/jellyfish_boss.render_controllers.json')
@@ -111,7 +111,7 @@ for item in animation['animations'].values():
             assert pairs[0][1] == pairs[-1][1]
             assert all(b-a <= .125001 for (a,_),(b,_) in zip(pairs,pairs[1:]))
 assert lod['animation_controllers']['controller.animation.pinene.jellyfish_boss.lod']['states']['near']['animations'] == ['idle','pulse']
-assert bp_manifest['header']['version'] == rp_manifest['header']['version'] == [0,1,3]
+assert bp_manifest['header']['version'] == rp_manifest['header']['version'] == [0,1,4]
 rig = load(ROOT/'docs/bosses/jellyfish/rig-plan.json')
 assert rig['skeleton']['tentacle_bone_count'] == len(idle['bones']) == 112
 assert rig['skeleton']['total_bone_count'] == len(near_names) == 114

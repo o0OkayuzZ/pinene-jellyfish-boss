@@ -1,0 +1,37 @@
+{
+  "revision": "v19",
+  "runtime_scale": 1.0,
+  "baked_visual_scale": 9.5,
+  "render_layers": 2,
+  "lod_switch_blocks": 80,
+  "independent_tentacles": 16,
+  "measured_fps": null,
+  "near_animated_bones": 113,
+  "near_joint_counts": {
+    "outer": 8,
+    "inner": 6
+  },
+  "tentacle_period_seconds": 6,
+  "geometries": {
+    "geometry.pinene.jellyfish_boss.shell": {
+      "cubes": 384,
+      "triangles": 2048,
+      "bones": 66
+    },
+    "geometry.pinene.jellyfish_boss.tissue": {
+      "cubes": 145,
+      "triangles": 1260,
+      "bones": 50
+    },
+    "geometry.pinene.jellyfish_boss.shell_far": {
+      "cubes": 128,
+      "triangles": 640,
+      "bones": 58
+    },
+    "geometry.pinene.jellyfish_boss.tissue_far": {
+      "cubes": 49,
+      "triangles": 492,
+      "bones": 42
+    }
+  }
+}

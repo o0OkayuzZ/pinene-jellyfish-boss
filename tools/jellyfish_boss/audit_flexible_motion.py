@@ -61,6 +61,47 @@ if attachments:
         max_attachment_box_gap = max(max_attachment_box_gap,delta.length)
     assert max_attachment_box_gap < .002, max_attachment_box_gap
     assert max_anchor_roundtrip < .002, max_anchor_roundtrip
+connection = json.loads(bpy.context.scene.get("jf_core_connection","{}"))
+connection_gap = 0
+terminal_plane_error = 0
+if connection:
+    owners = {id(c):b["name"] for g in geometries for b in g["bones"] for c in b.get("cubes",[])}
+    def exported_object(name):
+        obj = bpy.data.objects[name]
+        center = position(obj["jf_center"])
+        cube = min(near_cubes,key=lambda c:(Vector(c["origin"])+Vector(c["size"])*.5-center).length)
+        assert (Vector(cube["origin"])+Vector(cube["size"])*.5-center).length < .002
+        assert owners[id(cube)] == obj["jf_bone"] == "bell"
+        x,y,z = map(math.radians,cube.get("rotation",[0,0,0]))
+        return cube,Euler((-x,y,-z),"XYZ").to_matrix(),Vector(cube.get("pivot",[0,0,0]))
+    def inside_exported(point,name):
+        cube,rotation,pivot = exported_object(name)
+        local = pivot+rotation.transposed()@(point-pivot)
+        low = Vector(cube["origin"])
+        high = low+Vector(cube["size"])
+        return Vector([max(a-v,0,v-b) for v,a,b in zip(local,low,high)]).length
+    links = connection["segments"]
+    assert len(links) == 3
+    connection_gap = inside_exported(position(links[0]["start"]),connection["core"])
+    for index,link in enumerate(links):
+        for endpoint in ("start","end"):
+            p = position(link[endpoint])
+            connection_gap = max(connection_gap,inside_exported(p,link["object"]))
+        if index:
+            p = position(link["start"])
+            connection_gap = max(connection_gap,inside_exported(p,links[index-1]["object"]))
+    # Check the complete terminal cap against the exported inner north face.
+    cube,rotation,pivot = exported_object(links[-1]["object"])
+    panel,panel_rotation,panel_pivot = exported_object(connection["bell_panel"])
+    low,high = Vector(cube["origin"]),Vector(cube["origin"])+Vector(cube["size"])
+    for x in (low.x,high.x):
+        for z in (low.z,high.z):
+            p = pivot+rotation@(Vector((x,high.y,z))-pivot)
+            connection_gap = max(connection_gap,inside_exported(p,connection["bell_panel"]))
+            local = panel_pivot+panel_rotation.transposed()@(p-panel_pivot)
+            terminal_plane_error = max(terminal_plane_error,abs(local.z-panel["origin"][2]-connection["terminal_inset"]*152))
+    assert connection_gap < .002, connection_gap
+    assert terminal_plane_error < .002, terminal_plane_error
 def sample(channel,time,default):
     if not channel:
         return default
@@ -118,6 +159,10 @@ report = {
     "maximum_root_to_support_box_gap_model_units":max_attachment_box_gap,
     "maximum_root_anchor_roundtrip_error_model_units":max_anchor_roundtrip,
     "root_attachments":attachments,
+    "verified_core_connection_links":len(connection.get("segments",[])),
+    "maximum_core_connection_gap_model_units":connection_gap,
+    "maximum_terminal_inner_face_plane_error_model_units":terminal_plane_error,
+    "core_connection":connection,
     "scope":"Exported pivot math; excludes engine/material/FPS verification"}
 with open(out_path,"w",encoding="utf-8") as f:
     json.dump(report,f,indent=2)

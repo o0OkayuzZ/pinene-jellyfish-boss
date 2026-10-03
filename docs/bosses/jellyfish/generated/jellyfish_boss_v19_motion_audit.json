@@ -1,0 +1,334 @@
+{
+  "revision": "v19",
+  "sampled_poses": 481,
+  "independent_tentacles": 16,
+  "near_animated_bones": 113,
+  "maximum_centerline_joint_gap_model_units": 4.640779518354965e-05,
+  "maximum_centerline_radius_blocks": 6.893891690979051,
+  "centerline_y_blocks": [
+    1.1752616167068481,
+    12.949602127075195
+  ],
+  "maximum_loop_velocity_change_degrees_per_second": 0.7952000000000048,
+  "verified_root_attachments": 16,
+  "maximum_root_to_support_box_gap_model_units": 0,
+  "maximum_root_anchor_roundtrip_error_model_units": 6.017223951090758e-05,
+  "root_attachments": [
+    {
+      "kind": "outer",
+      "index": 1,
+      "bone": "tentacle_outer_01_01",
+      "initial_anchor": [
+        0.5,
+        0.0,
+        0.3400000035762787
+      ],
+      "anchor": [
+        0.5727457404136658,
+        3.725290298461914e-09,
+        0.3619999885559082
+      ],
+      "support": "JF_Bell_01_01"
+    },
+    {
+      "kind": "outer",
+      "index": 2,
+      "bone": "tentacle_outer_02_01",
+      "initial_anchor": [
+        0.3397281765937805,
+        0.4169667959213257,
+        0.3400000035762787
+      ],
+      "anchor": [
+        0.36214184761047363,
+        0.44447630643844604,
+        0.3619999885559082
+      ],
+      "support": "JF_Bell_05_01"
+    },
+    {
+      "kind": "outer",
+      "index": 3,
+      "bone": "tentacle_outer_03_01",
+      "initial_anchor": [
+        0.05650001019239426,
+        0.5214598774909973,
+        0.3400000035762787
+      ],
+      "anchor": [
+        0.06117788702249527,
+        0.5646337270736694,
+        0.3619999885559082
+      ],
+      "support": "JF_Bell_08_01"
+    },
+    {
+      "kind": "outer",
+      "index": 4,
+      "bone": "tentacle_outer_04_01",
+      "initial_anchor": [
+        -0.34231626987457275,
+        0.33366769552230835,
+        0.3400000035762787
+      ],
+      "anchor": [
+        -0.41481003165245056,
+        0.4043298661708832,
+        0.3619999885559082
+      ],
+      "support": "JF_Bell_13_01"
+    },
+    {
+      "kind": "outer",
+      "index": 5,
+      "bone": "tentacle_outer_05_01",
+      "initial_anchor": [
+        -0.4592077434062958,
+        -0.043457385152578354,
+        0.3400000035762787
+      ],
+      "anchor": [
+        -0.5699926614761353,
+        -0.053941577672958374,
+        0.3619999885559082
+      ],
+      "support": "JF_Bell_17_01"
+    },
+    {
+      "kind": "outer",
+      "index": 6,
+      "bone": "tentacle_outer_06_01",
+      "initial_anchor": [
+        -0.3886917233467102,
+        -0.3095226287841797,
+        0.3400000035762787
+      ],
+      "anchor": [
+        -0.4519491195678711,
+        -0.3598957061767578,
+        0.3619999885559082
+      ],
+      "support": "JF_Bell_20_01"
+    },
+    {
+      "kind": "outer",
+      "index": 7,
+      "bone": "tentacle_outer_07_01",
+      "initial_anchor": [
+        0.013653132133185863,
+        -0.5365432500839233,
+        0.3400000035762787
+      ],
+      "anchor": [
+        0.014483090490102768,
+        -0.5691589713096619,
+        0.3619999885559082
+      ],
+      "support": "JF_Bell_25_01"
+    },
+    {
+      "kind": "outer",
+      "index": 8,
+      "bone": "tentacle_outer_08_01",
+      "initial_anchor": [
+        0.4031742513179779,
+        -0.3392348289489746,
+        0.3400000035762787
+      ],
+      "anchor": [
+        0.44280171394348145,
+        -0.3725777566432953,
+        0.3619999885559082
+      ],
+      "support": "JF_Bell_29_01"
+    },
+    {
+      "kind": "inner",
+      "index": 1,
+      "bone": "tentacle_inner_01_01",
+      "initial_anchor": [
+        0.1401483416557312,
+        0.05805134400725365,
+        0.33000001311302185
+      ],
+      "anchor": [
+        0.1011306419968605,
+        0.05095130205154419,
+        0.3268205225467682
+      ],
+      "support": "JF_Core_Center"
+    },
+    {
+      "kind": "inner",
+      "index": 2,
+      "bone": "tentacle_inner_02_01",
+      "initial_anchor": [
+        0.04149455204606056,
+        0.12587767839431763,
+        0.33000001311302185
+      ],
+      "anchor": [
+        0.04515189304947853,
+        0.1061377078294754,
+        0.32919907569885254
+      ],
+      "support": "JF_Core_Center"
+    },
+    {
+      "kind": "inner",
+      "index": 3,
+      "bone": "tentacle_inner_03_01",
+      "initial_anchor": [
+        -0.040451280772686005,
+        0.10365045070648193,
+        0.33000001311302185
+      ],
+      "anchor": [
+        -0.03805382177233696,
+        0.09071051329374313,
+        0.3294750154018402
+      ],
+      "support": "JF_Core_Center"
+    },
+    {
+      "kind": "inner",
+      "index": 4,
+      "bone": "tentacle_inner_04_01",
+      "initial_anchor": [
+        -0.09459333121776581,
+        0.04701393470168114,
+        0.33000001311302185
+      ],
+      "anchor": [
+        -0.09459332376718521,
+        0.04701393097639084,
+        0.32999998331069946
+      ],
+      "support": "JF_Core_Center"
+    },
+    {
+      "kind": "inner",
+      "index": 5,
+      "bone": "tentacle_inner_05_01",
+      "initial_anchor": [
+        -0.10927452147006989,
+        -0.05042480304837227,
+        0.33000001311302185
+      ],
+      "anchor": [
+        -0.10927450656890869,
+        -0.05042479559779167,
+        0.32999998331069946
+      ],
+      "support": "JF_Core_Center"
+    },
+    {
+      "kind": "inner",
+      "index": 6,
+      "bone": "tentacle_inner_06_01",
+      "initial_anchor": [
+        -0.04707382619380951,
+        -0.13515986502170563,
+        0.33000001311302185
+      ],
+      "anchor": [
+        -0.04930393025279045,
+        -0.12312313169240952,
+        0.3304883539676666
+      ],
+      "support": "JF_Core_Center"
+    },
+    {
+      "kind": "inner",
+      "index": 7,
+      "bone": "tentacle_inner_07_01",
+      "initial_anchor": [
+        0.05124536529183388,
+        -0.14622029662132263,
+        0.33000001311302185
+      ],
+      "anchor": [
+        0.043779365718364716,
+        -0.10592357069253922,
+        0.3316349387168884
+      ],
+      "support": "JF_Core_Center"
+    },
+    {
+      "kind": "inner",
+      "index": 8,
+      "bone": "tentacle_inner_08_01",
+      "initial_anchor": [
+        0.13235259056091309,
+        -0.061473894864320755,
+        0.33000001311302185
+      ],
+      "anchor": [
+        0.12175097316503525,
+        -0.06340306997299194,
+        0.32913607358932495
+      ],
+      "support": "JF_Core_Center"
+    }
+  ],
+  "verified_core_connection_links": 3,
+  "maximum_core_connection_gap_model_units": 3.0517578125e-05,
+  "maximum_terminal_inner_face_plane_error_model_units": 6.665420532232791e-05,
+  "core_connection": {
+    "core": "JF_Core_Center",
+    "bell_panel": "JF_Bell_01_08",
+    "bone": "bell",
+    "segments": [
+      {
+        "object": "JF_Core_Link_01",
+        "start": [
+          -0.014280280098319054,
+          -0.010727783665060997,
+          0.3292008638381958
+        ],
+        "end": [
+          0.004000000189989805,
+          0.0,
+          0.6399999856948853
+        ]
+      },
+      {
+        "object": "JF_Core_Link_02",
+        "start": [
+          0.004000000189989805,
+          0.0,
+          0.6399999856948853
+        ],
+        "end": [
+          0.03984841704368591,
+          0.003924734890460968,
+          0.8226593732833862
+        ]
+      },
+      {
+        "object": "JF_Core_Link_03",
+        "start": [
+          0.03984841704368591,
+          0.003924734890460968,
+          0.8226593732833862
+        ],
+        "end": [
+          0.05916470289230347,
+          0.005827214568853378,
+          0.9461432695388794
+        ]
+      }
+    ],
+    "terminal_face_size": [
+      0.03,
+      0.064
+    ],
+    "terminal_inset": 0.0008,
+    "tip": [
+      0.05916470289230347,
+      0.005827214568853378,
+      0.9461432695388794
+    ]
+  },
+  "scope": "Exported pivot math; excludes engine/material/FPS verification"
+}

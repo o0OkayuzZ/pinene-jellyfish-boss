@@ -582,9 +582,13 @@ for index,obj in enumerate(body_objects,120):
         obj["jf_material_role"] = "JF_Inner_Core"
 
 scene = bpy.context.scene
+scene["jf_lod"] = LOD
+sys.path.insert(0,os.path.dirname(__file__))
+from attach_central_core import add_central_connection
+add_central_connection()
 scene["jf_segment_records"] = json.dumps(segment_records)
 scene["jf_attachment_records"] = json.dumps(attachments)
-scene["jf_revision"] = "v18"
+scene["jf_revision"] = "v19"
 # Exported JSON animation is authoritative. Native previews must also be
 # rendered from that JSON, rather than an unrelated Blender rig action.
 scene.frame_start, scene.frame_end = 1, 121

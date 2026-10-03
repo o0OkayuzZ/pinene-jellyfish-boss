@@ -4,24 +4,25 @@ Minecraft Bedrock向けの空中型ボスクラゲ単体パックです。
 旧3Dモデルを基準に、暗い半透明の傘、赤紫の内部組織、
 シアンの発光模様と、独立して揺れる16本の触手を再構成しています。
 
-![Jellyfish Boss runtime-geometry preview](docs/bosses/jellyfish/generated/jellyfish_boss_v18_runtime.png)
+![Jellyfish Boss runtime-geometry preview](docs/bosses/jellyfish/generated/jellyfish_boss_v19_runtime.png)
 
-![Flexible tentacle motion preview (12 seconds)](docs/bosses/jellyfish/generated/jellyfish_boss_v18_motion.gif)
+![Flexible tentacle motion preview (12 seconds)](docs/bosses/jellyfish/generated/jellyfish_boss_v19_motion.gif)
 
 プレビューは書き出したBedrock JSONと実際のテクスチャから描画したものです。
 Minecraft内のスクリーンショットではなく、照明・PBR表現は近似です。
 
 ## 現在の状態
 
-- v0.1.3 / v18 触手の付け根を仕上げる開発版
+- v0.1.4 / v19 中央組織と傘の内面の結合部を補修する開発版
+- 中央の結合部のみ3パーツで補修し、既存の形・触手の動き・テクスチャを維持
 - 外側は傘の縁、中央は内部組織へ接続し、浮いた黒いパーツを付け根へ再配置
-- 近距離526 cuboids / 3,272 triangles（従来1,136 / 9,176）
-- 80ブロック超では174 cuboids / 1,096 trianglesの遠距離モデル
+- 近距離529 cuboids / 3,308 triangles（従来1,136 / 9,176）
+- 80ブロック超では177 cuboids / 1,132 trianglesの遠距離モデル
 - 傘幅約12ブロック / 触手込み高さ約18ブロック
 - 114 bones / 113 animated bones（遠距離は傘のみ1 boneをアニメーション）
 - 16 independent tentacle chains
 - 外側8関節・内側6関節、6秒の波を根元から先端へ伝える
-- 直線的な枝を連続した細いリボンへ整理し、描画面数はv16と同じ
+- 直線的な枝を連続した細いリボンへ整理し、v19は結合部のみ36 triangles追加
 - shell・tissueの2描画層、1層のみ半透明
 - 512x512 color・normal・MERSを2組使用
 - 元のApril GLBから色・模様を直接投影して焼き込み
@@ -32,14 +33,16 @@ Minecraft内のスクリーンショットではなく、照明・PBR表現は�
 - v16は実機動画で形・動作を確認し、ユーザー体感で軽さが改善
 - v17は実機動画で形と動きを確認し、ユーザー評価は「かなりいい感じ」
 - v18は481姿勢と16本すべての付け根を検査し、下面のプレビューを確認
-- v18の実機の付け根表示・FPS・透過・LOD切替は再確認待ち
+- v18の実機動画で中央組織と傘の間の隙間を確認
+- v19は中央結合部3か所と末端全体の内面接続を検証し、481姿勢を確認
+- v19の実機の接続表示・FPS・透過・LOD切替は再確認待ち
 - 形の確認後にアニメーションと挙動の整理へ移る予定
-- 面数は同じでも関節の計算量は増えるため、FPSが同じとは断定しません
+- v19の関節数とアニメーション設定はv18と同じ。FPSは実機で確認
 
 ## 導入と確認
 
 1. `py -3 scripts/package_mcaddon.py` を実行します。
-2. `dist/pinene-jellyfish-boss-v0.1.3.mcaddon` をMinecraftで開きます。
+2. `dist/pinene-jellyfish-boss-v0.1.4.mcaddon` をMinecraftで開きます。
 3. ワールドへBPとRPを適用します。
 4. クリエイティブのアイテム欄から「ボスクラゲのスポーンエッグ」を使うか、次のコマンドで召喚します。
 
@@ -63,4 +66,4 @@ py -3 scripts/package_mcaddon.py
 `resource_pack/` と `behavior_pack/` は実機投入対象です。
 生成処理は `tools/jellyfish_boss/` にあります。
 
-再生成手順と比較条件は [v18-build.md](docs/bosses/jellyfish/v18-build.md) を参照してください。
+再生成手順と比較条件は [v19-build.md](docs/bosses/jellyfish/v19-build.md) を参照してください。
